@@ -5,13 +5,13 @@ import compilersandbox.model.*
 @main
 def main(): Unit = {
   val input = "9 / 2"
-  val (operator, operandA, operandB) = parse(input, None, None, None)
-  val result = operator.compute(operandA, operandB)
+  val tree = parse(input, None, None, None)
+  val result = tree.compute()
   println(result)
 }
 
-def parse(input: Seq[Char], operator: Option[Operator], operandA: Option[Operand], operandB: Option[Operand]): (Operator, Operand, Operand) = {
-
+def parse(input: Seq[Char], operator: Option[Operator], operandA: Option[Operand], operandB: Option[Operand]): Node = {
+  
   input.headOption match {
     case Some(c) =>
       c match {
@@ -34,6 +34,6 @@ def parse(input: Seq[Char], operator: Option[Operator], operandA: Option[Operand
           parse(input.tail, operator, operandA, operandB)
       }
     case None =>
-      (operator.get, operandA.get, operandB.get)
+      OperatorNode(operator.get, OperandNode(operandA.get), OperandNode(operandB.get))
   }
 }
