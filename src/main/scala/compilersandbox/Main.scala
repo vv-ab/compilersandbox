@@ -1,5 +1,7 @@
 package compilersandbox
 
+import compilersandbox.model.*
+
 @main
 def main(): Unit = {
   val input = "9 / 2"
@@ -7,32 +9,6 @@ def main(): Unit = {
   val result = operator.compute(operandA, operandB)
   println(result)
 }
-
-case class Operand(value: Int)
-trait Operator {
-  def compute(operandA: Operand, operandB: Operand): Int
-}
-case object Add extends Operator {
-  override def compute(operandA: Operand, operandB: Operand): Int = {
-    operandA.value + operandB.value
-  }
-}
-case object Sub extends Operator {
-  override def compute(operandA: Operand, operandB: Operand): Int = {
-    operandA.value - operandB.value
-  }
-}
-case object Mul extends Operator {
-  override def compute(operandA: Operand, operandB: Operand): Int = {
-    operandA.value * operandB.value
-  }
-}
-case object Div extends Operator {
-  override def compute(operandA: Operand, operandB: Operand): Int = {
-    operandA.value / operandB.value
-  }
-}
-
 
 def parse(input: Seq[Char], operator: Option[Operator], operandA: Option[Operand], operandB: Option[Operand]): (Operator, Operand, Operand) = {
 
