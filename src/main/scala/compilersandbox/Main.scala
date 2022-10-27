@@ -2,38 +2,63 @@ package compilersandbox
 
 import compilersandbox.model.*
 
+import scala.collection.mutable
+
 @main
 def main(): Unit = {
-  val input = "9 / 2"
-  val tree = parse(input, None, None, None)
+  val input = "8 * 5 * 6 / 2"
+  val tree = parse(input, mutable.Stack.empty, mutable.Stack.empty)
   val result = tree.compute()
   println(result)
 }
 
-def parse(input: Seq[Char], operator: Option[Operator], operandA: Option[Operand], operandB: Option[Operand]): Node = {
-  
+def parse(input: Seq[Char], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
+
+  def insertOperator(operator: Operator, operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Unit = {
+    operatorStack.headOption match {
+      case Some(head) if head.precedence() >= operator.precedence() =>
+        val right = nodeStack.pop()
+        val left = nodeStack.pop()
+        val operatorNode = OperatorNode(operatorStack.pop(), left, right)
+        nodeStack.push(operatorNode)
+        insertOperator(operator, operatorStack, nodeStack)
+      case _ =>
+        operatorStack.push(operator)
+    }
+  }
+
+  def drainOperatorStack(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
+    if (operatorStack.nonEmpty) {
+      val right = nodeStack.pop()
+      val left = nodeStack.pop()
+      val operator = operatorStack.pop()
+      val operatorNode = OperatorNode(operator, left, right)
+      nodeStack.push(operatorNode)
+      drainOperatorStack(operatorStack, nodeStack)
+    }
+    else {
+      nodeStack.pop()
+    }
+  }
+
   input.headOption match {
-    case Some(c) =>
-      c match {
+    case Some(character) =>
+      character match {
         case '+' =>
-          parse(input.tail, Some(Add), operandA, operandB)
+          insertOperator(Add, operatorStack, nodeStack)
         case '-' =>
-          parse(input.tail, Some(Sub), operandA, operandB)
+          insertOperator(Sub, operatorStack, nodeStack)
         case '*' =>
-          parse(input.tail, Some(Mul), operandA, operandB)
+          insertOperator(Mul, operatorStack, nodeStack)
         case '/' =>
-          parse(input.tail, Some(Div), operandA, operandB)
+          insertOperator(Div, operatorStack, nodeStack)
         case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' =>
-          if (operandA.isEmpty) {
-            parse(input.tail, operator, Some(Operand(c.asDigit)), operandB)
-          }
-          else {
-            parse(input.tail, operator, operandA, Some(Operand(c.asDigit)))
-          }
+          nodeStack.push(OperandNode(Operand(character.asDigit)))
         case _ =>
-          parse(input.tail, operator, operandA, operandB)
       }
+      parse(input.tail, operatorStack, nodeStack)
     case None =>
-      OperatorNode(operator.get, OperandNode(operandA.get), OperandNode(operandB.get))
+      val result = drainOperatorStack(operatorStack, nodeStack)
+      result
   }
 }
