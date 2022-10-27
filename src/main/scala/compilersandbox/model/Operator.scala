@@ -1,8 +1,22 @@
 package compilersandbox.model
 
-trait Operator {
+sealed trait Operator {
   def compute(left: Int, right: Int): Int
   def precedence(): Int
+}
+case object OpenParenthesis extends Operator {
+  override def compute(left: Int, right: Int): Int = {
+    ???
+  }
+
+  override def precedence(): Int = 0
+}
+case object CloseParenthesis extends Operator {
+  override def compute(left: Int, right: Int): Int = {
+    ???
+  }
+
+  override def precedence(): Int = 0
 }
 case object Add extends Operator {
   override def compute(left: Int, right: Int): Int = {

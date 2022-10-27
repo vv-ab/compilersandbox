@@ -13,18 +13,37 @@ def main(): Unit = {
   println(s"Result: $result")
 }
 
+
 def parse(input: Seq[Char], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
 
   def insertOperator(operator: Operator, operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Unit = {
-    operatorStack.headOption match {
-      case Some(head) if head.precedence() >= operator.precedence() =>
-        val right = nodeStack.pop()
-        val left = nodeStack.pop()
-        val operatorNode = OperatorNode(operatorStack.pop(), left, right)
-        nodeStack.push(operatorNode)
-        insertOperator(operator, operatorStack, nodeStack)
-      case _ =>
+    operator match {
+      case OpenParenthesis =>
         operatorStack.push(operator)
+      case CloseParenthesis =>
+        operatorStack.head match {
+          case OpenParenthesis =>
+            operatorStack.pop()
+          case CloseParenthesis => // this case should never happen
+            throw IllegalStateException("Encountered an unexpected closing parenthesis!")
+          case Add | Sub | Mul | Div =>
+            val right = nodeStack.pop()
+            val left = nodeStack.pop()
+            val operatorNode = OperatorNode(operatorStack.pop(), left, right)
+            nodeStack.push(operatorNode)
+            insertOperator(operator, operatorStack, nodeStack)
+        }
+      case Add | Sub | Mul | Div =>
+        operatorStack.headOption match {
+          case Some(head) if head.precedence() >= operator.precedence() =>
+            val right = nodeStack.pop()
+            val left = nodeStack.pop()
+            val operatorNode = OperatorNode(operatorStack.pop(), left, right)
+            nodeStack.push(operatorNode)
+            insertOperator(operator, operatorStack, nodeStack)
+          case _ =>
+            operatorStack.push(operator)
+        }
     }
   }
 
@@ -53,6 +72,10 @@ def parse(input: Seq[Char], operatorStack: mutable.Stack[Operator], nodeStack: m
           insertOperator(Mul, operatorStack, nodeStack)
         case '/' =>
           insertOperator(Div, operatorStack, nodeStack)
+        case '(' =>
+          insertOperator(OpenParenthesis, operatorStack, nodeStack)
+        case ')' =>
+          insertOperator(CloseParenthesis, operatorStack, nodeStack)
         case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' =>
           nodeStack.push(OperandNode(Operand(character.asDigit)))
         case _ =>
