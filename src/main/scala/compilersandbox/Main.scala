@@ -6,10 +6,11 @@ import scala.collection.mutable
 
 @main
 def main(): Unit = {
-  val input = "8 * 5 * 6 / 2"
+  print("Enter expression: ")
+  val input = Console.in.readLine()
   val tree = parse(input, mutable.Stack.empty, mutable.Stack.empty)
   val result = tree.compute()
-  println(result)
+  println(s"Result: $result")
 }
 
 def parse(input: Seq[Char], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
