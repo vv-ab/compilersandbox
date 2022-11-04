@@ -46,3 +46,4 @@ case object Div extends Operator {
 
   override def precedence(): Int = 2
 }
+
