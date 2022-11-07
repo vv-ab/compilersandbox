@@ -23,7 +23,7 @@ object Tokenizer {
               case _: Operator => // error
                 ???
             }
-          case '*' | '/' =>
+          case '*' | '/' | '^' =>
             current match {
               case _: Operator | Start | Parenthesis(Open) => // error
                 ???
@@ -45,13 +45,14 @@ object Tokenizer {
                 tokenize(input.tail, Parenthesis(Close), tokens :+ current)
             }
           case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' =>
-            current match
+            current match {
               case Start | Parenthesis(Open) | _: Operator =>
                 tokenize(input.tail, Number(s"$character"), tokens :+ current)
               case Number(value) =>
                 tokenize(input.tail, Number(s"$value$character"), tokens)
               case Parenthesis(Close) => // error
                 ???
+            }
           case _ =>
             ???
         }

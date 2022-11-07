@@ -26,7 +26,7 @@ object Parser {
               nodeStack.push(operatorNode)
               insertOperator(operator, operatorStack, nodeStack)
           }
-        case Add | Sub | Mul | Div =>
+        case Add | Sub | Mul | Div | Pow =>
           operatorStack.headOption match {
             case Some(head) if head.precedence() >= operator.precedence() =>
               val right = nodeStack.pop()
@@ -67,6 +67,8 @@ object Parser {
                 insertOperator(Mul, operatorStack, nodeStack)
               case "/" =>
                 insertOperator(Div, operatorStack, nodeStack)
+              case "^" =>
+                insertOperator(Pow, operatorStack, nodeStack)
             }
           case tokenizer.Number(value) =>
             nodeStack.push(OperandNode(Operand(value.toInt)))

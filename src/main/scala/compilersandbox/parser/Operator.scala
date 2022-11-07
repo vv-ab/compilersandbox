@@ -47,3 +47,11 @@ case object Div extends Operator {
   override def precedence(): Int = 2
 }
 
+case object Pow extends Operator {
+  override def compute(left: Int, right: Int): Int = {
+    Math.pow(left, right).asInstanceOf[Int]
+  }
+
+  override def precedence(): Int = 3
+}
+

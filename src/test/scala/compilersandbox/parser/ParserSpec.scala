@@ -59,5 +59,15 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should parse expressions with power" in {
+
+      val input = List(Start, Number("3"), Operator("^"), Number("3"), End)
+      val expectation = OperatorNode(Pow, OperandNode(Operand(3)), OperandNode(Operand(3)))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
   }
 }
