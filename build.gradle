@@ -16,4 +16,5 @@ repositories {
 
 dependencies {
     implementation "org.scala-lang:scala3-library_3:3.2.0"
+    implementation "org.scalatest:scalatest_3:3.2.14"
 }
