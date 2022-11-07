@@ -1,11 +1,13 @@
 package compilersandbox.parser
 
+import compilersandbox.tokenizer
+import compilersandbox.tokenizer.{End, Parenthesis, ParenthesisKind, Start, Token}
+
 import scala.collection.mutable
 
 object Parser {
 
-
-  def parse(input: Seq[Char], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
+  def parse(input: List[Token], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
 
     def insertOperator(operator: Operator, operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Unit = {
       operator match {
@@ -53,23 +55,30 @@ object Parser {
     }
 
     input.headOption match {
-      case Some(character) =>
-        character match {
-          case '+' =>
-            insertOperator(Add, operatorStack, nodeStack)
-          case '-' =>
-            insertOperator(Sub, operatorStack, nodeStack)
-          case '*' =>
-            insertOperator(Mul, operatorStack, nodeStack)
-          case '/' =>
-            insertOperator(Div, operatorStack, nodeStack)
-          case '(' =>
-            insertOperator(OpenParenthesis, operatorStack, nodeStack)
-          case ')' =>
-            insertOperator(CloseParenthesis, operatorStack, nodeStack)
-          case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' =>
-            nodeStack.push(OperandNode(Operand(character.asDigit)))
-          case _ =>
+      case Some(token) =>
+        token match {
+          case tokenizer.Operator(value) =>
+            value match {
+              case "+" =>
+                insertOperator(Add, operatorStack, nodeStack)
+              case "-" =>
+                insertOperator(Sub, operatorStack, nodeStack)
+              case "*" =>
+                insertOperator(Mul, operatorStack, nodeStack)
+              case "/" =>
+                insertOperator(Div, operatorStack, nodeStack)
+            }
+          case tokenizer.Number(value) =>
+            nodeStack.push(OperandNode(Operand(value.toInt)))
+          case Parenthesis(value) =>
+            value match {
+              case ParenthesisKind.Open =>
+                insertOperator(OpenParenthesis, operatorStack, nodeStack)
+              case ParenthesisKind.Close =>
+                insertOperator(CloseParenthesis, operatorStack, nodeStack)
+            }
+          case Start =>
+          case End =>
         }
         parse(input.tail, operatorStack, nodeStack)
       case None =>
