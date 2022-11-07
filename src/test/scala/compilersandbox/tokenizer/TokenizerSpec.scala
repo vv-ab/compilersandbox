@@ -1,6 +1,7 @@
-package compilersandbox
+package compilersandbox.tokenizer
 
-import compilersandbox.ParenthesisKind.{Close, Open}
+import compilersandbox.tokenizer.ParenthesisKind.{Close, Open}
+import compilersandbox.tokenizer.{End, Number, Operator, Parenthesis, Start, Tokenizer}
 import org.scalatest.freespec.AnyFreeSpec
 
 class TokenizerSpec extends AnyFreeSpec {

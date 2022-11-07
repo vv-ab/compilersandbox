@@ -1,4 +1,4 @@
-package compilersandbox.model
+package compilersandbox.parser
 
 sealed trait Node {
   def compute(): Int
