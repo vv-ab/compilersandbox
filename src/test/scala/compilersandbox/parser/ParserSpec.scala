@@ -109,5 +109,21 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should parse trigonometric expressions (tangents)" in {
+
+      val input = List(Start, Operator("tan"), Parenthesis(Open), Number("50"), Parenthesis(Close), End)
+      val expectation = OperatorNode(Tan, OperandNode(Operand(50)), OperandNode(Operand(0)))
+    }
+
+    "should parse 2*(tan(50))-22" in {
+
+      val input = List(Start, Number("2"), Operator("*"), Parenthesis(Open), Operator("tan"), Parenthesis(Open), Number("50"), Parenthesis(Close), Parenthesis(Close), Operator("-"), Number("22"), End)
+      val expectation = OperatorNode(Sub, OperatorNode(Mul, OperandNode(Operand(2)), OperatorNode(Tan, OperandNode(Operand(50)), OperandNode(Operand(0)))), OperandNode(Operand(22)))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
   }
 }

@@ -70,3 +70,11 @@ case object Cos extends Operator {
 
   override def precedence(): Int = 4
 }
+
+case object Tan extends Operator {
+  override def compute(left: Int, right: Int): Int = {
+    Math.tan(Math.toRadians(left)).asInstanceOf[Int]
+  }
+
+  override def precedence(): Int = 4
+}

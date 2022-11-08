@@ -74,6 +74,8 @@ object Tokenizer {
             current match {
               case operator @ Operator("si") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
+              case operator @ Operator("ta") =>
+                tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
               case _ => ???
             }
           case 'c' =>
@@ -86,6 +88,19 @@ object Tokenizer {
           case 'o' =>
             current match {
               case operator @ Operator("c") =>
+                tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
+              case _ => ???
+            }
+          case 't' =>
+            current match {
+              case Start | _: Operator | Parenthesis(Open) =>
+                tokenize(input.tail, Operator(s"$character"), tokens :+ current)
+              case _: Number | Parenthesis(Close) =>
+                ???
+            }
+          case 'a' =>
+            current match {
+              case operator @ Operator("t") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
               case _ => ???
             }
