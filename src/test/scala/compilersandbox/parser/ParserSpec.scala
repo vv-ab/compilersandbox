@@ -70,6 +70,16 @@ class ParserSpec extends AnyFreeSpec {
       assert(result == expectation)
     }
 
+    "should parse (2+2^2)" in {
+
+      val input = List(Start, Parenthesis(Open), Number("2"), Operator("+"), Number("2"), Operator("^"), Number("2"), Parenthesis(Close), End)
+      val expectation = OperatorNode(Add, OperandNode(Operand(2)), OperatorNode(Pow, OperandNode(Operand(2)), OperandNode(Operand(2))))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
+
     "should parse trigonometric expressions (sine)" in {
 
       val input=  List(Start, Operator("sin"), Parenthesis(Open), Number("90"), Parenthesis(Close), End)

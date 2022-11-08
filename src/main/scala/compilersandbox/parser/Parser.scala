@@ -19,7 +19,7 @@ object Parser {
               operatorStack.pop()
             case CloseParenthesis => // this case should never happen
               throw IllegalStateException("Encountered an unexpected closing parenthesis!")
-            case Add | Sub | Mul | Div =>
+            case Add | Sub | Mul | Div | Pow =>
               val right = nodeStack.pop()
               val left = nodeStack.pop()
               val operatorNode = OperatorNode(operatorStack.pop(), left, right)
