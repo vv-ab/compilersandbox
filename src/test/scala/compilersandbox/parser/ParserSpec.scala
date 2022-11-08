@@ -20,7 +20,7 @@ class ParserSpec extends AnyFreeSpec {
       assert(result == expectation)
     }
 
-    "should parse an expression with subraction" in {
+    "should parse an expression with subtraction" in {
 
       val input = List(Start, Number("7"), Operator("-"), Number("2"), End)
       val expectation = OperatorNode(Sub, OperandNode(Operand(7)), OperandNode(Operand(2)))
@@ -50,7 +50,7 @@ class ParserSpec extends AnyFreeSpec {
       assert(result == expectation)
     }
 
-    "should parse expressions with parenthese" in {
+    "should parse expressions with parentheses" in {
 
       val input = List(Start, Parenthesis(Open), Number("8"), Operator("-"), Number("6"), Parenthesis(Close), End)
       val expectation = OperatorNode(Sub, OperandNode(Operand(8)), OperandNode(Operand(6)))

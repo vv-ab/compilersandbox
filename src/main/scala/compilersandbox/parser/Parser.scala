@@ -9,6 +9,18 @@ object Parser {
 
   def parse(input: List[Token], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
 
+    def makeUnaryOperatorNode(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
+      val right = OperandNode(Operand(0))
+      val left = nodeStack.pop()
+      OperatorNode(operatorStack.pop(), left, right)
+    }
+
+    def makeBinaryOperatorNode(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
+      val right = nodeStack.pop()
+      val left = nodeStack.pop()
+      OperatorNode(operatorStack.pop(), left, right)
+    }
+
     def insertOperator(operator: Operator, operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Unit = {
       operator match {
         case OpenParenthesis =>
@@ -20,31 +32,26 @@ object Parser {
             case CloseParenthesis => // this case should never happen
               throw IllegalStateException("Encountered an unexpected closing parenthesis!")
             case Add | Sub | Mul | Div | Pow =>
-              val right = nodeStack.pop()
-              val left = nodeStack.pop()
-              val operatorNode = OperatorNode(operatorStack.pop(), left, right)
-              nodeStack.push(operatorNode)
+              val node = makeBinaryOperatorNode(operatorStack, nodeStack)
+              nodeStack.push(node)
               insertOperator(operator, operatorStack, nodeStack)
             case Sin | Cos | Tan =>
-              val right = OperandNode(Operand(0))
-              val left = nodeStack.pop()
-              val operatorNode = OperatorNode(operatorStack.pop(), left, right)
-              nodeStack.push(operatorNode)
+              val node = makeUnaryOperatorNode(operatorStack, nodeStack)
+              nodeStack.push(node)
               insertOperator(operator, operatorStack, nodeStack)
           }
         case Add | Sub | Mul | Div | Pow | Sin | Cos | Tan =>
           operatorStack.headOption match {
             case Some(head) if head.precedence() >= operator.precedence() =>
-              val (right, left) = head match {
+              val node = head match {
                 case OpenParenthesis | CloseParenthesis =>
                   throw IllegalStateException("Should never happen ;-)")
                 case Add | Sub | Mul | Div | Pow =>
-                  (nodeStack.pop(), nodeStack.pop())
+                  makeBinaryOperatorNode(operatorStack, nodeStack)
                 case Sin | Cos | Tan =>
-                  (OperandNode(Operand(0)), nodeStack.pop())
+                  makeUnaryOperatorNode(operatorStack, nodeStack)
               }
-              val operatorNode = OperatorNode(operatorStack.pop(), left, right)
-              nodeStack.push(operatorNode)
+              nodeStack.push(node)
               insertOperator(operator, operatorStack, nodeStack)
             case _ =>
               operatorStack.push(operator)
@@ -54,16 +61,14 @@ object Parser {
 
     def drainOperatorStack(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
       if (operatorStack.nonEmpty) {
-        val operator = operatorStack.pop()
-        val (right, left) = operator match {
+        val node = operatorStack.head match {
           case OpenParenthesis | CloseParenthesis => throw IllegalStateException("Should never happen ;-)")
           case Add | Sub | Mul | Div | Pow =>
-            (nodeStack.pop(), nodeStack.pop())
+            makeBinaryOperatorNode(operatorStack, nodeStack)
           case Sin | Cos | Tan =>
-            (OperandNode(Operand(0)), nodeStack.pop())
+            makeUnaryOperatorNode(operatorStack, nodeStack)
         }
-        val operatorNode = OperatorNode(operator, left, right)
-        nodeStack.push(operatorNode)
+        nodeStack.push(node)
         drainOperatorStack(operatorStack, nodeStack)
       }
       else {
