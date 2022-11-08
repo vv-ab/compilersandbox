@@ -45,5 +45,14 @@ class OperatorSpec extends AnyFreeSpec {
       assert(Sin.compute(90, 0) == Math.sin(Math.toRadians(90)))
     }
   }
+
+  "A Cos Operator" - {
+
+    "should compute cos(0)" in {
+      assert(Cos.compute(0, 0) == Math.sin(Math.toRadians(0)))
+    }
+  }
+
+  
   
 }

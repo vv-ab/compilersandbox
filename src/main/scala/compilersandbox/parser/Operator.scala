@@ -62,3 +62,11 @@ case object Sin extends Operator {
 
   override def precedence(): Int = 4
 }
+
+case object Cos extends Operator {
+  override def compute(left: Int, right: Int): Int = {
+    Math.cos(Math.toRadians(left)).asInstanceOf[Int]
+  }
+
+  override def precedence(): Int = 4
+}

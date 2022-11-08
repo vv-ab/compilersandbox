@@ -89,5 +89,25 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should parse trigonometric expressions (cosine)" in {
+
+      val input = List(Start, Operator("cos"), Parenthesis(Open), Number("0"), Parenthesis(Close), End)
+      val expectation = OperatorNode(Cos, OperandNode(Operand(0)), OperandNode(Operand(0)))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
+
+    "should parse 2*(cos(0))-22" in {
+
+      val input = List(Start, Number("2"), Operator("*"), Parenthesis(Open), Operator("cos"), Parenthesis(Open), Number("0"), Parenthesis(Close), Parenthesis(Close), Operator("-"), Number("22"), End)
+      val expectation = OperatorNode(Sub, OperatorNode(Mul, OperandNode(Operand(2)), OperatorNode(Cos, OperandNode(Operand(0)), OperandNode(Operand(0)))), OperandNode(Operand(22)))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
   }
 }

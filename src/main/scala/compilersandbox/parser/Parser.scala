@@ -25,14 +25,14 @@ object Parser {
               val operatorNode = OperatorNode(operatorStack.pop(), left, right)
               nodeStack.push(operatorNode)
               insertOperator(operator, operatorStack, nodeStack)
-            case Sin =>
+            case Sin | Cos =>
               val right = OperandNode(Operand(0))
               val left = nodeStack.pop()
               val operatorNode = OperatorNode(operatorStack.pop(), left, right)
               nodeStack.push(operatorNode)
               insertOperator(operator, operatorStack, nodeStack)
           }
-        case Add | Sub | Mul | Div | Pow | Sin =>
+        case Add | Sub | Mul | Div | Pow | Sin | Cos =>
           operatorStack.headOption match {
             case Some(head) if head.precedence() >= operator.precedence() =>
               val (right, left) = head match {
@@ -40,7 +40,7 @@ object Parser {
                   throw IllegalStateException("Should never happen ;-)")
                 case Add | Sub | Mul | Div | Pow =>
                   (nodeStack.pop(), nodeStack.pop())
-                case Sin =>
+                case Sin | Cos =>
                   (OperandNode(Operand(0)), nodeStack.pop())
               }
               val operatorNode = OperatorNode(operatorStack.pop(), left, right)
@@ -59,7 +59,7 @@ object Parser {
           case OpenParenthesis | CloseParenthesis => throw IllegalStateException("Should never happen ;-)")
           case Add | Sub | Mul | Div | Pow =>
             (nodeStack.pop(), nodeStack.pop())
-          case Sin =>
+          case Sin | Cos =>
             (OperandNode(Operand(0)), nodeStack.pop())
         }
         val operatorNode = OperatorNode(operator, left, right)
@@ -88,6 +88,8 @@ object Parser {
                 insertOperator(Pow, operatorStack, nodeStack)
               case "sin" =>
                 insertOperator(Sin, operatorStack, nodeStack)
+              case "cos" =>
+                insertOperator(Cos, operatorStack, nodeStack)
             }
           case tokenizer.Number(value) =>
             nodeStack.push(OperandNode(Operand(value.toInt)))
