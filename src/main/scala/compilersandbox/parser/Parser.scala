@@ -25,12 +25,24 @@ object Parser {
               val operatorNode = OperatorNode(operatorStack.pop(), left, right)
               nodeStack.push(operatorNode)
               insertOperator(operator, operatorStack, nodeStack)
+            case Sin =>
+              val right = OperandNode(Operand(0))
+              val left = nodeStack.pop()
+              val operatorNode = OperatorNode(operatorStack.pop(), left, right)
+              nodeStack.push(operatorNode)
+              insertOperator(operator, operatorStack, nodeStack)
           }
-        case Add | Sub | Mul | Div | Pow =>
+        case Add | Sub | Mul | Div | Pow | Sin =>
           operatorStack.headOption match {
             case Some(head) if head.precedence() >= operator.precedence() =>
-              val right = nodeStack.pop()
-              val left = nodeStack.pop()
+              val (right, left) = head match {
+                case OpenParenthesis | CloseParenthesis =>
+                  throw IllegalStateException("Should never happen ;-)")
+                case Add | Sub | Mul | Div | Pow =>
+                  (nodeStack.pop(), nodeStack.pop())
+                case Sin =>
+                  (OperandNode(Operand(0)), nodeStack.pop())
+              }
               val operatorNode = OperatorNode(operatorStack.pop(), left, right)
               nodeStack.push(operatorNode)
               insertOperator(operator, operatorStack, nodeStack)
@@ -42,9 +54,14 @@ object Parser {
 
     def drainOperatorStack(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Node = {
       if (operatorStack.nonEmpty) {
-        val right = nodeStack.pop()
-        val left = nodeStack.pop()
         val operator = operatorStack.pop()
+        val (right, left) = operator match {
+          case OpenParenthesis | CloseParenthesis => throw IllegalStateException("Should never happen ;-)")
+          case Add | Sub | Mul | Div | Pow =>
+            (nodeStack.pop(), nodeStack.pop())
+          case Sin =>
+            (OperandNode(Operand(0)), nodeStack.pop())
+        }
         val operatorNode = OperatorNode(operator, left, right)
         nodeStack.push(operatorNode)
         drainOperatorStack(operatorStack, nodeStack)
@@ -69,6 +86,8 @@ object Parser {
                 insertOperator(Div, operatorStack, nodeStack)
               case "^" =>
                 insertOperator(Pow, operatorStack, nodeStack)
+              case "sin" =>
+                insertOperator(Sin, operatorStack, nodeStack)
             }
           case tokenizer.Number(value) =>
             nodeStack.push(OperandNode(Operand(value.toInt)))

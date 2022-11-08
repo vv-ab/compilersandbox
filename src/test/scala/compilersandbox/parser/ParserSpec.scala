@@ -8,7 +8,7 @@ import scala.collection.mutable
 
 class ParserSpec extends AnyFreeSpec {
 
-  "A Parser " - {
+  "A Parser" - {
 
     "should parse 5+3" in {
 
@@ -64,6 +64,26 @@ class ParserSpec extends AnyFreeSpec {
 
       val input = List(Start, Number("3"), Operator("^"), Number("3"), End)
       val expectation = OperatorNode(Pow, OperandNode(Operand(3)), OperandNode(Operand(3)))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
+
+    "should parse trigonometric expressions (sine)" in {
+
+      val input=  List(Start, Operator("sin"), Parenthesis(Open), Number("90"), Parenthesis(Close), End)
+      val expectation = OperatorNode(Sin, OperandNode(Operand(90)), OperandNode(Operand(0)))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
+
+    "should parse 2*(sin(90))-22" in {
+
+      val input = List(Start, Number("2"), Operator("*"), Parenthesis(Open), Operator("sin"), Parenthesis(Open), Number("90"), Parenthesis(Close), Parenthesis(Close), Operator("-"), Number("22"), End)
+      val expectation = OperatorNode(Sub, OperatorNode(Mul, OperandNode(Operand(2)), OperatorNode(Sin, OperandNode(Operand(90)), OperandNode(Operand(0)))), OperandNode(Operand(22)))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 

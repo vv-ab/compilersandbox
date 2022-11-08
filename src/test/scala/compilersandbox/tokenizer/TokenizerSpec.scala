@@ -64,5 +64,12 @@ class TokenizerSpec extends AnyFreeSpec {
       val result = Tokenizer.tokenize("2^3", Start, List.empty)
       assert(result == expected)
     }
+
+    "should tokenize  2*sin(90)-22" in {
+
+      val expected = List(Start, Number("2"), Operator("*"), Operator("sin"), Parenthesis(Open), Number("90"), Parenthesis(Close), Operator("-"), Number("22"), End)
+      val result = Tokenizer.tokenize("2*sin(90)-22", Start, List.empty)
+      assert(result == expected)
+    }
   }
 }

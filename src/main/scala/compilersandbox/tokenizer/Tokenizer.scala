@@ -53,6 +53,27 @@ object Tokenizer {
               case Parenthesis(Close) => // error
                 ???
             }
+          case 's' =>
+            current match {
+              case Start | _: Operator | Parenthesis(Open) =>
+                tokenize(input.tail, Operator(s"$character"), tokens :+ current)
+              case _: Number | Parenthesis(Close) =>
+                ???
+                //case 'o' =>
+            }
+          case 'i' =>
+            current match {
+              case operator @ Operator("s") =>
+                tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
+              case _ =>
+                ???
+            }
+          case 'n' =>
+            current match {
+              case operator @ Operator("si") =>
+                tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
+              case _ => ???
+            }
           case _ =>
             ???
         }
