@@ -85,5 +85,19 @@ class TokenizerSpec extends AnyFreeSpec {
       val result = Tokenizer.tokenize("tan(50)", Start, List.empty)
       assert(result == expected)
     }
+
+    "should tokenize 4(2/1)" in {
+
+      val expected = List(Start, Number("4"), Parenthesis(Open), Number("2"), Operator("/"), Number("1"), Parenthesis(Close), End)
+      val result = Tokenizer.tokenize("4(2/1)", Start, List.empty)
+      assert(result == expected)
+    }
+
+    "should tokenize (2+1)(7-3)" in {
+
+      val expected = List(Start, Parenthesis(Open), Number("2"), Operator("+"), Number("1"), Parenthesis(Close), Parenthesis(Open), Number("7"), Operator("-"), Number("3"), Parenthesis(Close), End)
+      val result = Tokenizer.tokenize("(2+1)(7-3)", Start, List.empty)
+      assert(result == expected)
+    }
   }
 }

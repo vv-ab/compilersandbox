@@ -59,5 +59,4 @@ class OperatorSpec extends AnyFreeSpec {
       assert(Tan.compute(50, 0) == Math.tan(Math.toRadians(50)).asInstanceOf[Int])
     }
   }
-  
 }

@@ -9,69 +9,65 @@ import scala.collection.mutable
 
 object Tokenizer {
 
-  def tokenize(input: Seq[Char], current: Token, tokens: List[Token]): List[Token] = {
+  def tokenize(input: Seq[Char], previous: Token, tokens: List[Token]): List[Token] = {
 
     input.headOption match {
       case Some(character) =>
         character match {
           case '+' | '-'   =>
-            current match {
+            previous match {
               case _: Number | Parenthesis(Close) =>
-                tokenize(input.tail, Operator(s"$character"), tokens :+ current)
+                tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
               case Parenthesis(Open) | Start =>
-                tokenize(input.tail, Number(s"$character"), tokens :+ current)
+                tokenize(input.tail, Number(s"$character"), tokens :+ previous)
               case _: Operator => // error
                 ???
             }
           case '*' | '/' | '^' =>
-            current match {
+            previous match {
               case _: Operator | Start | Parenthesis(Open) => // error
                 ???
               case _: Number | Parenthesis(Close) =>
-                tokenize(input.tail, Operator(s"$character"), tokens :+ current)
+                tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
             }
           case '(' =>
-            current match {
-              case Start | _: Operator | Parenthesis(Open) =>
-                tokenize(input.tail, Parenthesis(Open), tokens :+ current)
-              case _: Number | Parenthesis(Close) => // error
-                ???
+            previous match {
+              case Start | _: Operator | _: Number | Parenthesis(Open) | Parenthesis(Close) =>
+                tokenize(input.tail, Parenthesis(Open), tokens :+ previous)
             }
           case ')' =>
-            current match {
+            previous match {
               case Start | _: Operator | Parenthesis(Open) => // error
                 ???
               case _: Number | Parenthesis(Close) =>
-                tokenize(input.tail, Parenthesis(Close), tokens :+ current)
+                tokenize(input.tail, Parenthesis(Close), tokens :+ previous)
             }
           case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' =>
-            current match {
-              case Start | Parenthesis(Open) | _: Operator =>
-                tokenize(input.tail, Number(s"$character"), tokens :+ current)
+            previous match {
+              case Start | Parenthesis(Open) | Parenthesis(Close) | _: Operator =>
+                tokenize(input.tail, Number(s"$character"), tokens :+ previous)
               case Number(value) =>
                 tokenize(input.tail, Number(s"$value$character"), tokens)
-              case Parenthesis(Close) => // error
-                ???
             }
           case 's' =>
-            current match {
+            previous match {
               case operator @ Operator("co") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
               case Start | _: Operator | Parenthesis(Open) =>
-                tokenize(input.tail, Operator(s"$character"), tokens :+ current)
+                tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
               case _: Number | Parenthesis(Close) =>
                 ???
                 //case 'o' =>
             }
           case 'i' =>
-            current match {
+            previous match {
               case operator @ Operator("s") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
               case _ =>
                 ???
             }
           case 'n' =>
-            current match {
+            previous match {
               case operator @ Operator("si") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
               case operator @ Operator("ta") =>
@@ -80,28 +76,28 @@ object Tokenizer {
                 ???
             }
           case 'c' =>
-            current match {
+            previous match {
               case Start | _: Operator | Parenthesis(Open) =>
-                tokenize(input.tail, Operator(s"$character"), tokens :+ current)
+                tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
               case _: Number | Parenthesis(Close) =>
                 ???
             }
           case 'o' =>
-            current match {
+            previous match {
               case operator @ Operator("c") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
               case _ =>
                 ???
             }
           case 't' =>
-            current match {
+            previous match {
               case Start | _: Operator | Parenthesis(Open) =>
-                tokenize(input.tail, Operator(s"$character"), tokens :+ current)
+                tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
               case _: Number | Parenthesis(Close) =>
                 ???
             }
           case 'a' =>
-            current match {
+            previous match {
               case operator @ Operator("t") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
               case _ =>
@@ -111,7 +107,7 @@ object Tokenizer {
             ???
         }
       case None =>
-        (tokens :+ current) :+ End
+        (tokens :+ previous) :+ End
 
     }
   }

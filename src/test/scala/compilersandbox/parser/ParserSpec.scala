@@ -40,6 +40,27 @@ class ParserSpec extends AnyFreeSpec {
       assert(result == expectation)
     }
 
+    "should parse 2*(1+1)" in {
+
+      val input = List(Start, Number("2"), Operator("*"), Parenthesis(Open), Number("1"), Operator("+"), Number("1"), Parenthesis(Close), End)
+      val expectation = OperatorNode(Mul, OperandNode(Operand(2)), OperatorNode(Add, OperandNode(Operand(1)), OperandNode(Operand(1))))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
+
+    "should parse 2*(1*(3+4))" in {
+
+      val input = List(Start, Number("2"), Operator("*"), Parenthesis(Open), Number("1"), Operator("*"), Parenthesis(Open), Number("3"), Operator("+"), Number("4"), Parenthesis(Close), Parenthesis(Close), End)
+      val expectation = OperatorNode(Mul, OperandNode(Operand(2)), OperatorNode(Mul, OperandNode(Operand(1)), OperatorNode(Add, OperandNode(Operand(3)), OperandNode(Operand(4)))))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
+
+
     "should parse an expression with division" in {
 
       val input = List(Start, Number("4"), Operator("/"), Number("2"), End)
@@ -70,10 +91,20 @@ class ParserSpec extends AnyFreeSpec {
       assert(result == expectation)
     }
 
-    "should parse (2+2^2)" in {
+    "should parse 2*(2+2^2)" in {
 
-      val input = List(Start, Parenthesis(Open), Number("2"), Operator("+"), Number("2"), Operator("^"), Number("2"), Parenthesis(Close), End)
-      val expectation = OperatorNode(Add, OperandNode(Operand(2)), OperatorNode(Pow, OperandNode(Operand(2)), OperandNode(Operand(2))))
+      val input = List(Start, Number("2"), Operator("*"), Parenthesis(Open), Number("2"), Operator("+"), Number("2"), Operator("^"), Number("2"), Parenthesis(Close), End)
+      val expectation = OperatorNode(Mul, OperandNode(Operand(2)), OperatorNode(Add, OperandNode(Operand(2)), OperatorNode(Pow, OperandNode(Operand(2)), OperandNode(Operand(2)))))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
+
+    "should parse 2*(2+(2^2))" in {
+
+      val input = List(Start, Number("2"), Operator("*"), Parenthesis(Open), Number("2"), Operator("+"), Parenthesis(Open), Number("2"), Operator("^"), Number("2"), Parenthesis(Close), Parenthesis(Close), End)
+      val expectation = OperatorNode(Mul, OperandNode(Operand(2)), OperatorNode(Add, OperandNode(Operand(2)), OperatorNode(Pow, OperandNode(Operand(2)), OperandNode(Operand(2)))))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 
