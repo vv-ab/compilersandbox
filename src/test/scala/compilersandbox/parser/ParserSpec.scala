@@ -2,10 +2,13 @@ package compilersandbox.parser
 
 import compilersandbox.tokenizer.ParenthesisKind.{Close, Open}
 import compilersandbox.tokenizer.{End, Number, Operator, Parenthesis, ParenthesisKind, Start}
+import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatestplus.junit.JUnitRunner
 
 import scala.collection.mutable
 
+@RunWith(classOf[JUnitRunner])
 class ParserSpec extends AnyFreeSpec {
 
   "A Parser" - {

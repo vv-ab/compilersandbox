@@ -2,9 +2,13 @@ package compilersandbox
 
 import compilersandbox.parser.Parser
 import compilersandbox.tokenizer.{Preprocessor, Start, Tokenizer}
+import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatestplus.junit.JUnitRunner
+
 import scala.collection.mutable
 
+@RunWith(classOf[JUnitRunner])
 class IntegrationSpec extends AnyFreeSpec {
 
   "Should compute 5+3" in {

@@ -2,8 +2,11 @@ package compilersandbox.tokenizer
 
 import compilersandbox.tokenizer.ParenthesisKind.{Close, Open}
 import compilersandbox.tokenizer.{End, Number, Operator, Parenthesis, Start, Tokenizer}
+import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatestplus.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class TokenizerSpec extends AnyFreeSpec {
 
   "A Tokenizer" - {

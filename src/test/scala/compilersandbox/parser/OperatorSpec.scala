@@ -1,7 +1,10 @@
 package compilersandbox.parser
 
+import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatestplus.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class OperatorSpec extends AnyFreeSpec {
 
   "An Add Operator" - {
