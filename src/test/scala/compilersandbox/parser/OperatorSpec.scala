@@ -17,7 +17,7 @@ class OperatorSpec extends AnyFreeSpec {
   "A Sub Operator" - {
 
     "should compute 2-3" in {
-      assert(Sub.compute(2, 3) == 2 - 3)
+      assert(Sub.compute(2, 3) == 4 - 3)
     }
   }
 
