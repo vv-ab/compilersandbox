@@ -1,7 +1,6 @@
 package compilersandbox.tokenizer
 
 import compilersandbox.*
-import compilersandbox.model.*
 import compilersandbox.tokenizer.ParenthesisKind.{Close, Open}
 
 import scala.collection.immutable.{AbstractSeq, LinearSeq}

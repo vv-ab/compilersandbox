@@ -1,6 +1,5 @@
 package compilersandbox
 
-import compilersandbox.model.*
 import compilersandbox.parser.Parser
 import compilersandbox.tokenizer.{Preprocessor, Start, Tokenizer}
 
