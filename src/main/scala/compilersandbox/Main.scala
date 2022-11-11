@@ -14,5 +14,4 @@ def main(): Unit = {
   val tree = Parser.parse(processedTokens, mutable.Stack.empty, mutable.Stack.empty)
   val result = tree.compute()
   println(s"Result: $result")
-  println(List(tokens))
 }
