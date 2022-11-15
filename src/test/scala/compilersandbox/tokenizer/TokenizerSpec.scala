@@ -106,50 +106,57 @@ class TokenizerSpec extends AnyFreeSpec {
 
     "should fail on r" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("r", Start, List.empty)
+      val input = "r"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(0)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on u+w" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("u+w", Start, List.empty)
+      val input = "u+w"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(0)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 5+u" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("5+u", Start, List.empty)
+      val input = "5+u"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 1+s" in {
 
-      val expected = Left(TokenizerFailure("incomplete operator"))
-      val result = Tokenizer.tokenize("1+s", Start, List.empty)
+      val input = "1+s"
+      val expected = Left(TokenizerFailure("incomplete operator", input, Location(3)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on ta+1" in {
 
-      val expected = Left(TokenizerFailure("incomplete operator"))
-      val result = Tokenizer.tokenize("ta+1", Start, List.empty)
+      val input = "ta+1"
+      val expected = Left(TokenizerFailure("incomplete operator", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 1+t" in {
 
-      val expected = Left(TokenizerFailure("incomplete operator"))
-      val result = Tokenizer.tokenize("1+t", Start, List.empty)
+      val input = "1+t"
+      val expected = Left(TokenizerFailure("incomplete operator", input, Location(3)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on sin(x)" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("sin(x)", Start, List.empty)
+      val input = "sin(x)"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(4)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
@@ -227,58 +234,66 @@ class TokenizerSpec extends AnyFreeSpec {
 
     "should fail on 3.4." in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("3.4.", Start, List.empty)
+      val input = "3.4."
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(3)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 6.-8" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("6.-8", Start, List.empty)
+      val input = "6.-8"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 6./8" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("6./8", Start, List.empty)
+      val input = "6./8"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 6.cos(0)" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("6./8", Start, List.empty)
+      val input = "6.cos(0)"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 6.(2+2)" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("6.(2+2)", Start, List.empty)
+      val input = "6.(2+2)"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on (2+2.)" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("(2+2.)", Start, List.empty)
+      val input = "(2+2.)"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(5)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on 2..2" in {
 
-      val expected = Left(TokenizerFailure("unexpected token"))
-      val result = Tokenizer.tokenize("2..2", Start, List.empty)
+      val input = "2..2"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
     "should fail on .3" in {
 
-    val expected = Left(TokenizerFailure("unexpected token"))
-    val result = Tokenizer.tokenize(".3", Start, List.empty)
-    assert(result == expected)
+      val input = ".3"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(0)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
+      assert(result == expected)
     }
 
     "should tokenize (1+2)cos(3)" in {

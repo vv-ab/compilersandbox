@@ -176,7 +176,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 6*/3" in {
 
       val input = List(Start, IntegerNumber("6"), Operator("*"), Operator("/"), IntegerNumber("3"), End)
-      val expectation = Left(ParsingFailure(""))
+      val expectation = Left(ParsingFailure("missing operand"))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 
@@ -186,7 +186,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 6-/3" in {
 
       val input = List(Start, IntegerNumber("6"), Operator("-"), Operator("/"), IntegerNumber("3"), End)
-      val expectation = Left(ParsingFailure(""))
+      val expectation = Left(ParsingFailure("missing operand"))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 
@@ -206,7 +206,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on *8" in {
 
       val input = List(Start, Operator("*"), IntegerNumber("8"), End)
-      val expectation = Left(ParsingFailure(""))
+      val expectation = Left(ParsingFailure("missing operand"))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 
@@ -216,7 +216,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on *2+2" in {
 
       val input = List(Start, Operator("*"), IntegerNumber("8"), Operator("+"), IntegerNumber("2"), End)
-      val expectation = Left(ParsingFailure(""))
+      val expectation = Left(ParsingFailure("missing operand"))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 
@@ -226,7 +226,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 3+5*" in {
 
       val input = List(Start, IntegerNumber("3"), Operator("+"), IntegerNumber("5"), Operator("*"), End)
-      val expectation = Left(ParsingFailure(""))
+      val expectation = Left(ParsingFailure("missing operand"))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 
@@ -236,7 +236,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on sin" in {
 
       val input = List(Start, Operator("sin"), End)
-      val expectation = Left(ParsingFailure(""))
+      val expectation = Left(ParsingFailure("missing operand"))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 
@@ -246,7 +246,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on /" in {
 
       val input = List(Start, Operator("/"), End)
-      val expectation = Left(ParsingFailure(""))
+      val expectation = Left(ParsingFailure("missing operand"))
 
       val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
 

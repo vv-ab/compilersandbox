@@ -16,7 +16,7 @@ object Parser {
         Right(OperatorNode(operatorStack.pop(), left, right))
       }
       else {
-        Left(ParsingFailure(""))
+        Left(ParsingFailure("missing operand"))
       }
     }
 
@@ -27,7 +27,7 @@ object Parser {
         Right(OperatorNode(operatorStack.pop(), left, right))
       }
       else {
-        Left(ParsingFailure(""))
+        Left(ParsingFailure("missing operand"))
       }
     }
 
