@@ -12,13 +12,13 @@ object Preprocessor {
         currentToken match {
           case _: Operator | Start | End =>
             preprocess(input.tail, result :+ currentToken)
-          case _: tokenizer.Number =>
+          case _: IntegerNumber | _: FloatingPointNumber =>
             result.lastOption match {
               case Some(value) =>
                 value match {
                   case _: Operator | Start | Parenthesis(Open) =>
                     preprocess(input.tail, result :+ currentToken)
-                  case _: tokenizer.Number | End =>
+                  case _: IntegerNumber | _: IncompleteOperator | _: IncompleteFloatingPointNumber | _: IncompleteIntegerNumber | _: FloatingPointNumber | End =>
                     ??? // should never happen
                   case Parenthesis(Close) =>
                     val unseenOperator = Operator("*")
@@ -30,9 +30,9 @@ object Preprocessor {
             result.lastOption match {
               case Some(value) =>
                 value match {
-                  case _: Operator | _: tokenizer.Number | Start | Parenthesis(Close) =>
+                  case _: Operator | _: IntegerNumber | _: FloatingPointNumber | Start | Parenthesis(Close) =>
                     preprocess(input.tail, result :+ currentToken)
-                  case End | Parenthesis(Open) =>
+                  case End | _: IncompleteIntegerNumber | _: IncompleteOperator | _: IncompleteFloatingPointNumber | Parenthesis(Open) =>
                     ??? // error
                 }
               case None => ???
@@ -43,14 +43,16 @@ object Preprocessor {
                 previousToken match {
                   case _: Operator | Start =>
                     preprocess(input.tail, result :+ currentToken)
-                  case _: tokenizer.Number | Parenthesis(Close) =>
+                  case _: IntegerNumber | _: FloatingPointNumber | Parenthesis(Close) =>
                     val unseenOperator = Operator("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
-                  case Parenthesis(Open) | End =>
+                  case Parenthesis(Open) | End | _: IncompleteOperator | _: IncompleteIntegerNumber | _: IncompleteFloatingPointNumber =>
                     ??? // error
                 }
               case None => ???
             }
+          case _: IncompleteIntegerNumber | _: IncompleteOperator | _: IncompleteFloatingPointNumber =>
+            ???
         }
       case None =>
         result

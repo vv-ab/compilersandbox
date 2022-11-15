@@ -1,7 +1,7 @@
 package compilersandbox.parser
 
 import compilersandbox.tokenizer
-import compilersandbox.tokenizer.{End, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.tokenizer.{End, FloatingPointNumber, IncompleteFloatingPointNumber, IncompleteIntegerNumber, IncompleteOperator, IntegerNumber, Parenthesis, ParenthesisKind, Start, Token}
 
 import scala.collection.mutable
 
@@ -137,8 +137,11 @@ object Parser {
               case "tan" =>
                 insertOperator(Tan, operatorStack, nodeStack)
             }
-          case tokenizer.Number(value) =>
-            nodeStack.push(OperandNode(Operand(value.toInt)))
+          case IntegerNumber(value) =>
+            nodeStack.push(OperandNode(Operand(value.toDouble)))
+            Right(())
+          case FloatingPointNumber(value) =>
+            nodeStack.push(OperandNode(Operand(value.toDouble)))
             Right(())
           case Parenthesis(value) =>
             value match {
@@ -147,6 +150,8 @@ object Parser {
               case ParenthesisKind.Close =>
                 insertOperator(CloseParenthesis, operatorStack, nodeStack)
             }
+          case _: IncompleteFloatingPointNumber | _: IncompleteOperator | _: IncompleteIntegerNumber =>
+            Left(ParsingFailure("encountered illegal token"))
           case Start | End =>
             Right(())
         }

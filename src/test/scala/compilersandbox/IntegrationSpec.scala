@@ -29,7 +29,6 @@ class IntegrationSpec extends AnyFreeSpec {
             assert(result == 8)
         }
     }
-
   }
 
   "Should compute 2(88/22)-2^3" in {

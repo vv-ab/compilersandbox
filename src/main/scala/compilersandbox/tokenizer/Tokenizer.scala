@@ -15,50 +15,97 @@ object Tokenizer {
         character match {
           case '+' | '-'   =>
             previous match {
-              case _: Number | Parenthesis(Close) =>
+              case Parenthesis(Close) =>
                 tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
               case Parenthesis(Open) | Start =>
-                tokenize(input.tail, Number(s"$character"), tokens :+ previous)
+                tokenize(input.tail, IncompleteIntegerNumber(s"$character"), tokens :+ previous)
               case _: IncompleteOperator =>
                 Left(TokenizerFailure("incomplete operator"))
-              case _: Operator =>
+              case IncompleteIntegerNumber(value) =>
+                tokenize(input.tail, Operator(s"$character"), tokens :+ IntegerNumber(value))
+              case IncompleteFloatingPointNumber(value) =>
+                if (value.last == '.') {
+                  Left(TokenizerFailure("unexpected token"))
+                }
+                else {
+                  tokenize(input.tail, Operator(s"$character"), tokens :+ FloatingPointNumber(value))
+                }
+              case _: Operator | _: IntegerNumber | _: FloatingPointNumber | End =>
                 ???
             }
           case '*' | '/' | '^' =>
             previous match {
-              case _: Operator | Start | Parenthesis(Open) =>
-                ???
-              case _: Number | Parenthesis(Close) =>
+              case IncompleteIntegerNumber(value) =>
+                tokenize(input.tail, Operator(s"$character"), tokens :+ IntegerNumber(value))
+              case IncompleteFloatingPointNumber(value) =>
+                if (value.last == '.') {
+                  Left(TokenizerFailure("unexpected token"))
+                }
+                else {
+                  tokenize(input.tail, Operator(s"$character"), tokens :+ FloatingPointNumber(value))
+                }
+              case Parenthesis(Close) =>
                 tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
+              case _: Operator | Start | Parenthesis(Open) | _: FloatingPointNumber | _: IntegerNumber | _: IncompleteOperator | End =>
+                ???
             }
           case '(' =>
             previous match {
-              case Start | _: Operator | _: Number | Parenthesis(Open) | Parenthesis(Close) =>
+              case Start | _: Operator | Parenthesis(Open) | Parenthesis(Close) =>
                 tokenize(input.tail, Parenthesis(Open), tokens :+ previous)
+              case IncompleteIntegerNumber(value) =>
+                tokenize(input.tail, Parenthesis(Open), tokens :+ IntegerNumber(value))
+              case IncompleteFloatingPointNumber(value) =>
+                if (value.last == '.') {
+                  Left(TokenizerFailure("unexpected token"))
+                }
+                else {
+                  tokenize(input.tail, Parenthesis(Open), tokens :+ FloatingPointNumber(value))
+                }
+              case _: FloatingPointNumber | _: IntegerNumber | _: IncompleteOperator | End =>
+                ???
             }
           case ')' =>
             previous match {
-              case Start | _: Operator | Parenthesis(Open) =>
+              case Start | _: Operator | Parenthesis(Open) | _: FloatingPointNumber | _: IntegerNumber | _: IncompleteOperator | End =>
                 ???
-              case _: Number | Parenthesis(Close) =>
+              case Parenthesis(Close) =>
                 tokenize(input.tail, Parenthesis(Close), tokens :+ previous)
+              case IncompleteIntegerNumber(value) =>
+                tokenize(input.tail, Parenthesis(Close), tokens :+ IntegerNumber(value))
+              case IncompleteFloatingPointNumber(value) =>
+                if (value.last == '.') {
+                  Left(TokenizerFailure("unexpected token"))
+                }
+                else {
+                  tokenize(input.tail, Parenthesis(Close), tokens :+ FloatingPointNumber(value))
+                }
             }
           case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' =>
             previous match {
               case Start | Parenthesis(Open) | Parenthesis(Close) | _: Operator =>
-                tokenize(input.tail, Number(s"$character"), tokens :+ previous)
-              case Number(value) =>
-                tokenize(input.tail, Number(s"$value$character"), tokens)
-
-
+                tokenize(input.tail, IncompleteIntegerNumber(s"$character"), tokens :+ previous)
+              case IncompleteIntegerNumber(value) =>
+                tokenize(input.tail, IncompleteIntegerNumber(s"$value$character"), tokens)
+              case IncompleteFloatingPointNumber(value) =>
+                tokenize(input.tail, IncompleteFloatingPointNumber(s"$value$character"), tokens)
+              case _: IncompleteOperator | _: FloatingPointNumber | _: IntegerNumber | End => 
+                ???
+            }
+          case '.' =>
+            previous match {
+              case IncompleteIntegerNumber(value) =>
+                tokenize(input.tail, IncompleteFloatingPointNumber(s"$value$character"), tokens)
+              case _: Operator | _: IncompleteOperator | Start | End | _: Parenthesis | _: FloatingPointNumber | _: IntegerNumber | _: IncompleteFloatingPointNumber =>
+                Left(TokenizerFailure("unexpected token"))
             }
           case 's' =>
             previous match {
               case operator @ IncompleteOperator("co") =>
                 tokenize(input.tail, Operator(s"${operator.value}$character"), tokens)
-              case Start | _: Operator | Parenthesis(Open) =>
+              case Start | _: Operator | Parenthesis(Open) | Parenthesis(Close) =>
                 tokenize(input.tail, IncompleteOperator(s"$character"), tokens :+ previous)
-              case _: Number | Parenthesis(Close) =>
+              case _ =>
                 Left(TokenizerFailure("unexpected token"))
             }
           case 'i' =>
@@ -79,9 +126,9 @@ object Tokenizer {
             }
           case 'c' =>
             previous match {
-              case Start | _: Operator | Parenthesis(Open) =>
+              case Start | _: Operator | Parenthesis(Open) | Parenthesis(Close) =>
                 tokenize(input.tail, IncompleteOperator(s"$character"), tokens :+ previous)
-              case _: Number | Parenthesis(Close) =>
+              case _ =>
                 Left(TokenizerFailure("unexpected token"))
             }
           case 'o' =>
@@ -93,9 +140,9 @@ object Tokenizer {
             }
           case 't' =>
             previous match {
-              case Start | _: Operator | Parenthesis(Open) =>
+              case Start | _: Operator | Parenthesis(Open) | Parenthesis(Close) =>
                 tokenize(input.tail, IncompleteOperator(s"$character"), tokens :+ previous)
-              case _: Number | Parenthesis(Close) =>
+              case _ =>
                 Left(TokenizerFailure("unexpected token"))
             }
           case 'a' =>
@@ -110,6 +157,10 @@ object Tokenizer {
         }
       case None =>
         previous match {
+          case IncompleteIntegerNumber(value) =>
+            Right((tokens :+ IntegerNumber(value)) :+ End)
+          case IncompleteFloatingPointNumber(value) =>
+            Right((tokens :+ FloatingPointNumber(value)) :+ End)
           case _: IncompleteOperator =>
             Left(TokenizerFailure("incomplete operator"))
           case _ =>
@@ -131,7 +182,13 @@ case object Start extends Token
 
 case object End extends Token
 
-case class Number(value: String) extends Token
+case class IncompleteIntegerNumber(value: String) extends Token //ich glaub das is ne normale number
+
+case class IncompleteFloatingPointNumber(value: String) extends Token
+
+case class IntegerNumber(value: String) extends Token
+
+case class FloatingPointNumber(value: String) extends Token
 
 case class Parenthesis(value: ParenthesisKind) extends Token
 
