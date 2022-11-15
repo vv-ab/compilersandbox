@@ -35,7 +35,7 @@ class PreprocessorSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
-    "should process 4cos(0)" ignore {
+    "should process 4cos(0)" in {
 
       val input = List(Start, IntegerNumber("4"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))
       val expected = List(Start, IntegerNumber("4"), Operator("*"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))
@@ -43,7 +43,7 @@ class PreprocessorSpec extends AnyFreeSpec {
       assert(result == expected)
     }
     
-    "should process 4.3cos(0)" ignore {
+    "should process 4.3cos(0)" in {
 
       val input = List(Start, FloatingPointNumber("4.3"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))
       val expected = List(Start, FloatingPointNumber("4.3"), Operator("*"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))

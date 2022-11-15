@@ -10,6 +10,19 @@ object Preprocessor {
     input.headOption match {
       case Some(currentToken) =>
         currentToken match {
+          case Operator("cos") | Operator("sin") | Operator("tan") =>
+            result.lastOption match {
+              case Some(value) =>
+                value match {
+                  case _: Operator | Start | Parenthesis(Open) =>
+                    preprocess(input.tail, result :+ currentToken)
+                  case _: IncompleteOperator | _: IncompleteFloatingPointNumber | _: IncompleteIntegerNumber | End =>
+                    ??? // should never happen
+                  case Parenthesis(Close) | _: IntegerNumber | _: FloatingPointNumber =>
+                    val unseenOperator = Operator("*")
+                    preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
+                }
+            }
           case _: Operator | Start | End =>
             preprocess(input.tail, result :+ currentToken)
           case _: IntegerNumber | _: FloatingPointNumber =>

@@ -160,31 +160,35 @@ class TokenizerSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
-    "should fail on 6*/3" ignore {
+    "should fail on 6*/3" in {
 
-      val expected = Right(List(Start, IntegerNumber("6"), Operator("*"), Operator("/"), IntegerNumber("3"), End))
-      val result = Tokenizer.tokenize("6*/3", Start, List.empty)
+      val input = "6*/3"
+      val expected = Left(TokenizerFailure("unexpected operator", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
-    "should fail on ()" ignore {
+    "should fail on ()" in {
 
-      val expected = Right(List(Start, Parenthesis(Open), Parenthesis(Close), End))
-      val result = Tokenizer.tokenize("()", Start, List.empty)
+      val input = "()"
+      val expected = Left(TokenizerFailure("missing operand", input, Location(1)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
-    "should fail on 6+*1" ignore {
+    "should fail on 6+*1" in {
 
-      val expected = Right(List(Start, IntegerNumber("6"), Operator("+"), Operator("*"), IntegerNumber("1"), End))
-      val result = Tokenizer.tokenize("6+*1", Start, List.empty)
+      val input = "6+*1"
+      val expected = Left(TokenizerFailure("unexpected operator", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
-    "should fail on 2/+" ignore {
+    "should fail on 2/+" in {
 
-      val expected = Right(List(Start, IntegerNumber("2"), Operator("/"), Operator("+"), End))
-      val result = Tokenizer.tokenize("2/+", Start, List.empty)
+      val input = "2/+"
+      val expected = Left(TokenizerFailure("unexpected operator", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
       assert(result == expected)
     }
 
@@ -303,5 +307,12 @@ class TokenizerSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
+    "should fail on 5++4" in {
+
+      val input = "5++4"
+      val expected = Left(TokenizerFailure("unexpected operator", input, Location(2)))
+      val result = Tokenizer.tokenize(input, Start, List.empty)
+      assert(result == expected)
+    }
   }
 }

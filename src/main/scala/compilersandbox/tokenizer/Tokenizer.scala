@@ -36,8 +36,10 @@ object Tokenizer {
                   else {
                     tokenize(input.tail, Operator(s"$character"), tokens :+ FloatingPointNumber(value))
                   }
-                case _: Operator | _: IntegerNumber | _: FloatingPointNumber | End =>
+                case _: IntegerNumber | _: FloatingPointNumber | End  =>
                   ???
+                case _: Operator =>
+                  Left(TokenizerFailure("unexpected operator", initialInput, currentLocation()))
               }
             case '*' | '/' | '^' =>
               previous match {
@@ -52,7 +54,9 @@ object Tokenizer {
                   }
                 case Parenthesis(Close) =>
                   tokenize(input.tail, Operator(s"$character"), tokens :+ previous)
-                case _: Operator | Start | Parenthesis(Open) | _: FloatingPointNumber | _: IntegerNumber | _: IncompleteOperator | End =>
+                case _: Operator =>
+                  Left(TokenizerFailure("unexpected operator", initialInput, currentLocation()))
+                case Start | Parenthesis(Open) | _: FloatingPointNumber | _: IntegerNumber | _: IncompleteOperator | End =>
                   ???
               }
             case '(' =>
@@ -73,8 +77,10 @@ object Tokenizer {
               }
             case ')' =>
               previous match {
-                case Start | _: Operator | Parenthesis(Open) | _: FloatingPointNumber | _: IntegerNumber | _: IncompleteOperator | End =>
+                case Start | _: Operator | _: FloatingPointNumber | _: IntegerNumber | _: IncompleteOperator | End =>
                   ???
+                case Parenthesis(Open) =>
+                  Left(TokenizerFailure("missing operand", initialInput, currentLocation()))
                 case Parenthesis(Close) =>
                   tokenize(input.tail, Parenthesis(Close), tokens :+ previous)
                 case IncompleteIntegerNumber(value) =>
@@ -185,6 +191,7 @@ sealed trait Token {
 
   def size(): Int
 }
+
 
 
 case class Operator(value: String) extends Token {

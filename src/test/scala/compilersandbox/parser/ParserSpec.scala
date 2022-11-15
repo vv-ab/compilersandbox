@@ -273,5 +273,15 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should fail on 5+" in {
+
+      val input = List(Start, IntegerNumber("5"), Operator("+"))
+      val expectation = Left(ParsingFailure("missing operand"))
+
+      val result = Parser.parse(input, mutable.Stack.empty, mutable.Stack.empty)
+
+      assert(result == expectation)
+    }
   }
 }

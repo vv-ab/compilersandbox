@@ -13,6 +13,7 @@ def main(): Unit = {
   tokens match {
     case Left(failure) =>
       println(makeErrorMessage(failure))
+
     case Right(tokens) =>
       val processedTokens = Preprocessor.preprocess(tokens, List.empty)
       val tree = Parser.parse(processedTokens, mutable.Stack.empty, mutable.Stack.empty)
@@ -28,7 +29,7 @@ def main(): Unit = {
 
 def makeErrorMessage(failure: TokenizerFailure): String = {
 
-  val arrow = (0 until failure.location.value).foldLeft("^")({ (result, _) => s"-$result"})
+  val arrow = (0 until failure.location.value).foldLeft("^")({ (result, _) => s"-$result" })
   s"""
      |${failure.input}
      |$arrow ${failure.message}
