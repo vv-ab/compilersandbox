@@ -1,7 +1,7 @@
 package compilersandbox.parser
 
 import compilersandbox.tokenizer
-import compilersandbox.tokenizer.{End, FloatingPointNumber, IncompleteFloatingPointNumber, IncompleteIntegerNumber, IncompleteOperator, IntegerNumber, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.tokenizer.Tokenizer.{End, Ident, FloatingPointLiteral, Literal, Parenthesis, ParenthesisKind, Start, Token}
 
 import scala.collection.mutable
 
@@ -118,7 +118,7 @@ object Parser {
     val result = input.headOption match {
       case Some(token) =>
         val result: Either[ParsingFailure, Unit] = token match {
-          case tokenizer.Operator(value) =>
+          case Ident(value) =>
             value match {
               case "+" =>
                 insertOperator(Add, operatorStack, nodeStack)
@@ -136,11 +136,13 @@ object Parser {
                 insertOperator(Cos, operatorStack, nodeStack)
               case "tan" =>
                 insertOperator(Tan, operatorStack, nodeStack)
+              case _ =>
+                Left(ParsingFailure(s"unknown token: $value"))
             }
-          case IntegerNumber(value) =>
+          case Literal(value) =>
             nodeStack.push(OperandNode(Operand(value.toDouble)))
             Right(())
-          case FloatingPointNumber(value) =>
+          case FloatingPointLiteral(value) =>
             nodeStack.push(OperandNode(Operand(value.toDouble)))
             Right(())
           case Parenthesis(value) =>
@@ -150,8 +152,6 @@ object Parser {
               case ParenthesisKind.Close =>
                 insertOperator(CloseParenthesis, operatorStack, nodeStack)
             }
-          case _: IncompleteFloatingPointNumber | _: IncompleteOperator | _: IncompleteIntegerNumber =>
-            Left(ParsingFailure("encountered illegal token"))
           case Start | End =>
             Right(())
         }

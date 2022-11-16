@@ -1,7 +1,7 @@
 package compilersandbox.tokenizer
 
-import compilersandbox.tokenizer
-import compilersandbox.tokenizer.ParenthesisKind.{Close, Open}
+import compilersandbox.tokenizer.Tokenizer.{Start, End, Ident, FloatingPointLiteral, Literal, Parenthesis, ParenthesisKind, Token}
+import compilersandbox.tokenizer.Tokenizer.ParenthesisKind.{Close, Open}
 
 object Preprocessor {
 
@@ -10,31 +10,31 @@ object Preprocessor {
     input.headOption match {
       case Some(currentToken) =>
         currentToken match {
-          case Operator("cos") | Operator("sin") | Operator("tan") =>
+          case Ident("cos") | Ident("sin") | Ident("tan") =>
             result.lastOption match {
               case Some(value) =>
                 value match {
-                  case _: Operator | Start | Parenthesis(Open) =>
+                  case _: Ident | Start | Parenthesis(Open) =>
                     preprocess(input.tail, result :+ currentToken)
-                  case _: IncompleteOperator | _: IncompleteFloatingPointNumber | _: IncompleteIntegerNumber | End =>
+                  case End =>
                     ??? // should never happen
-                  case Parenthesis(Close) | _: IntegerNumber | _: FloatingPointNumber =>
-                    val unseenOperator = Operator("*")
+                  case Parenthesis(Close) | _: Literal | _: FloatingPointLiteral =>
+                    val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
                 }
             }
-          case _: Operator | Start | End =>
+          case _: Ident | Start | End =>
             preprocess(input.tail, result :+ currentToken)
-          case _: IntegerNumber | _: FloatingPointNumber =>
+          case _: Literal | _: FloatingPointLiteral =>
             result.lastOption match {
               case Some(value) =>
                 value match {
-                  case _: Operator | Start | Parenthesis(Open) =>
+                  case _: Ident | Start | Parenthesis(Open) =>
                     preprocess(input.tail, result :+ currentToken)
-                  case _: IntegerNumber | _: IncompleteOperator | _: IncompleteFloatingPointNumber | _: IncompleteIntegerNumber | _: FloatingPointNumber | End =>
+                  case _: Literal | _: FloatingPointLiteral | End =>
                     ??? // should never happen
                   case Parenthesis(Close) =>
-                    val unseenOperator = Operator("*")
+                    val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
                 }
               case None => ??? // error
@@ -43,9 +43,9 @@ object Preprocessor {
             result.lastOption match {
               case Some(value) =>
                 value match {
-                  case _: Operator | _: IntegerNumber | _: FloatingPointNumber | Start | Parenthesis(Close) =>
+                  case _: Ident | _: Literal | _: FloatingPointLiteral | Start | Parenthesis(Close) =>
                     preprocess(input.tail, result :+ currentToken)
-                  case End | _: IncompleteIntegerNumber | _: IncompleteOperator | _: IncompleteFloatingPointNumber | Parenthesis(Open) =>
+                  case End | Parenthesis(Open) =>
                     ??? // error
                 }
               case None => ???
@@ -54,18 +54,16 @@ object Preprocessor {
             result.lastOption match {
               case Some(previousToken) =>
                 previousToken match {
-                  case _: Operator | Start =>
+                  case _: Ident | Start =>
                     preprocess(input.tail, result :+ currentToken)
-                  case _: IntegerNumber | _: FloatingPointNumber | Parenthesis(Close) =>
-                    val unseenOperator = Operator("*")
+                  case _: Literal | _: FloatingPointLiteral | Parenthesis(Close) =>
+                    val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
-                  case Parenthesis(Open) | End | _: IncompleteOperator | _: IncompleteIntegerNumber | _: IncompleteFloatingPointNumber =>
+                  case Parenthesis(Open) | End =>
                     ??? // error
                 }
               case None => ???
             }
-          case _: IncompleteIntegerNumber | _: IncompleteOperator | _: IncompleteFloatingPointNumber =>
-            ???
         }
       case None =>
         result

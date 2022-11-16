@@ -1,7 +1,7 @@
 package compilersandbox.tokenizer
 
-import compilersandbox.tokenizer.ParenthesisKind.{Close, Open}
-import compilersandbox.tokenizer.{End, IntegerNumber, Operator, Parenthesis, Preprocessor, Start, Token, Tokenizer}
+import compilersandbox.tokenizer.Tokenizer.ParenthesisKind.{Close, Open}
+import compilersandbox.tokenizer.Tokenizer.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, Start, Token}
 import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatestplus.junit.JUnitRunner
@@ -13,23 +13,23 @@ class PreprocessorSpec extends AnyFreeSpec {
 
     "should process 2(3+4)" in {
 
-      val input = List(Start, IntegerNumber("2"), Parenthesis(Open), IntegerNumber("3"), Operator("+"), IntegerNumber("4"), Parenthesis(Close), End)
-      val expected = List(Start, IntegerNumber("2"), Operator("*"), Parenthesis(Open), IntegerNumber("3"), Operator("+"), IntegerNumber("4"), Parenthesis(Close), End)
+      val input = List(Start, Literal("2"), Parenthesis(Open), Literal("3"), Ident("+"), Literal("4"), Parenthesis(Close), End)
+      val expected = List(Start, Literal("2"), Ident("*"), Parenthesis(Open), Literal("3"), Ident("+"), Literal("4"), Parenthesis(Close), End)
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
 
     "should process (3+4)2" in {
 
-      val input = List(Start, Parenthesis(Open), IntegerNumber("3"), Operator("+"), IntegerNumber("4"), Parenthesis(Close), IntegerNumber("2"), End)
-      val expected = List(Start, Parenthesis(Open), IntegerNumber("3"), Operator("+"), IntegerNumber("4"), Parenthesis(Close), Operator("*"), IntegerNumber("2"), End)
+      val input = List(Start, Parenthesis(Open), Literal("3"), Ident("+"), Literal("4"), Parenthesis(Close), Literal("2"), End)
+      val expected = List(Start, Parenthesis(Open), Literal("3"), Ident("+"), Literal("4"), Parenthesis(Close), Ident("*"), Literal("2"), End)
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
 
     "should process 5+3" in {
 
-      val input = List(Start, IntegerNumber("5"), Operator("+"), IntegerNumber("3"), End)
+      val input = List(Start, Literal("5"), Ident("+"), Literal("3"), End)
       val expected = input
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
@@ -37,40 +37,40 @@ class PreprocessorSpec extends AnyFreeSpec {
 
     "should process 4cos(0)" in {
 
-      val input = List(Start, IntegerNumber("4"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))
-      val expected = List(Start, IntegerNumber("4"), Operator("*"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))
+      val input = List(Start, Literal("4"), Ident("cos"), Parenthesis(Open), Literal("0"), Parenthesis(Close))
+      val expected = List(Start, Literal("4"), Ident("*"), Ident("cos"), Parenthesis(Open), Literal("0"), Parenthesis(Close))
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
     
     "should process 4.3cos(0)" in {
 
-      val input = List(Start, FloatingPointNumber("4.3"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))
-      val expected = List(Start, FloatingPointNumber("4.3"), Operator("*"), Operator("cos"), Parenthesis(Open), IntegerNumber("0"), Parenthesis(Close))
+      val input = List(Start, FloatingPointLiteral("4.3"), Ident("cos"), Parenthesis(Open), Literal("0"), Parenthesis(Close))
+      val expected = List(Start, FloatingPointLiteral("4.3"), Ident("*"), Ident("cos"), Parenthesis(Open), Literal("0"), Parenthesis(Close))
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
 
     "should process 7.5(2-1)" in {
 
-      val input = List(Start, FloatingPointNumber("7.5"), Parenthesis(Open), IntegerNumber("2"), Operator("-"), IntegerNumber("1"), Parenthesis(Close), End)
-      val expected = List(Start, FloatingPointNumber("7.5"), Operator("*"), Parenthesis(Open), IntegerNumber("2"), Operator("-"), IntegerNumber("1"), Parenthesis(Close), End)
+      val input = List(Start, FloatingPointLiteral("7.5"), Parenthesis(Open), Literal("2"), Ident("-"), Literal("1"), Parenthesis(Close), End)
+      val expected = List(Start, FloatingPointLiteral("7.5"), Ident("*"), Parenthesis(Open), Literal("2"), Ident("-"), Literal("1"), Parenthesis(Close), End)
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
 
     "should process (2-1)2.5" in {
 
-      val input = List(Start,  Parenthesis(Open), IntegerNumber("2"), Operator("-"), IntegerNumber("1"), Parenthesis(Close), FloatingPointNumber("2.5"), End)
-      val expected = List(Start, Parenthesis(Open), IntegerNumber("2"), Operator("-"), IntegerNumber("1"), Parenthesis(Close), Operator("*"), FloatingPointNumber("2.5"), End)
+      val input = List(Start,  Parenthesis(Open), Literal("2"), Ident("-"), Literal("1"), Parenthesis(Close), FloatingPointLiteral("2.5"), End)
+      val expected = List(Start, Parenthesis(Open), Literal("2"), Ident("-"), Literal("1"), Parenthesis(Close), Ident("*"), FloatingPointLiteral("2.5"), End)
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
 
     "should process (2-2.5)2" in {
 
-      val input = List(Start, Parenthesis(Open), IntegerNumber("2"), Operator("-"), FloatingPointNumber("2.5"), Parenthesis(Close), IntegerNumber("2"), End)
-      val expected = List(Start, Parenthesis(Open), IntegerNumber("2"), Operator("-"), FloatingPointNumber("2.5"), Parenthesis(Close), Operator("*"), IntegerNumber("2"), End)
+      val input = List(Start, Parenthesis(Open), Literal("2"), Ident("-"), FloatingPointLiteral("2.5"), Parenthesis(Close), Literal("2"), End)
+      val expected = List(Start, Parenthesis(Open), Literal("2"), Ident("-"), FloatingPointLiteral("2.5"), Parenthesis(Close), Ident("*"), Literal("2"), End)
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
