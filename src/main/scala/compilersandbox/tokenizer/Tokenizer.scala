@@ -1,7 +1,8 @@
 package compilersandbox.tokenizer
 
-import compilersandbox.tokenizer.Tokenizer.ParenthesisKind.{Close, Open}
-
+import compilersandbox.tokenizer.Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, Start, Token}
+import compilersandbox.util.Location
+import compilersandbox.tokenizer.Tokens.ParenthesisKind.{Open, Close}
 
 object Tokenizer {
 
@@ -36,7 +37,7 @@ object Tokenizer {
                 case End =>
                   ???
               }
-            case Letter(letter)  =>
+            case Letter(letter) =>
               previous match {
                 case Start | Ident(Operator(_)) | _: Literal | _: FloatingPointLiteral | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$letter"), tokens :+ previous)
@@ -50,7 +51,7 @@ object Tokenizer {
                 case Start | _: Ident | Parenthesis(Open) =>
                   tokenize(input.tail, Literal(s"$character"), tokens :+ previous)
                 case _: Literal | _: FloatingPointLiteral | Parenthesis(Close) =>
-                tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
+                  tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case End =>
                   ???
               }
@@ -81,6 +82,7 @@ object Tokenizer {
       }
 
     }
+
     tokenize(initialInput, Start, List.empty)
   }
 
@@ -104,47 +106,6 @@ object Tokenizer {
   object Letter {
     def unapply(value: Char): Option[Char] = if (value.isLetter) Some(value) else None
   }
-
-  sealed trait Token {
-
-    def size(): Int
-  }
-
-  case object Start extends Token {
-
-    override def size(): Int = 0
-  }
-
-  case object End extends Token {
-
-    override def size(): Int = 0
-  }
-
-  case class Ident(value: String) extends Token {
-
-    override def size(): Int = value.length
-  }
-
-  case class Literal(value: String) extends Token {
-
-    override def size(): Int = value.length
-  }
-
-  case class FloatingPointLiteral(value: String) extends Token {
-
-    override def size(): Int = value.length
-  }
-
-  case class Parenthesis(value: ParenthesisKind) extends Token {
-
-    override def size(): Int = 1
-  }
-
-  enum ParenthesisKind {
-    case Open, Close
-  }
-
-  case class Location(value: Int)
 
   case class TokenizerFailure(message: String, input: String, location: Location)
 

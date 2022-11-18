@@ -1,7 +1,7 @@
 package compilersandbox.tokenizer
 
-import compilersandbox.tokenizer.Tokenizer.{Start, End, Ident, FloatingPointLiteral, Literal, Parenthesis, ParenthesisKind, Token}
-import compilersandbox.tokenizer.Tokenizer.ParenthesisKind.{Close, Open}
+import Tokens.{Start, End, Ident, FloatingPointLiteral, Literal, Parenthesis, ParenthesisKind, Token}
+import Tokens.ParenthesisKind.{Close, Open}
 
 object Preprocessor {
 

@@ -1,7 +1,9 @@
 package compilersandbox.tokenizer
 
-import compilersandbox.tokenizer.Tokenizer.{End, FloatingPointLiteral, Ident, Literal, Location, Parenthesis, Start, TokenizerFailure, tokenize}
-import compilersandbox.tokenizer.Tokenizer.ParenthesisKind.{Close, Open}
+import Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, Start}
+import Tokens.ParenthesisKind.{Close, Open}
+import compilersandbox.tokenizer.Tokenizer.TokenizerFailure
+import compilersandbox.util.Location
 import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatestplus.junit.JUnitRunner

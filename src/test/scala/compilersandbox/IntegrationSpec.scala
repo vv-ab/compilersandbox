@@ -20,7 +20,7 @@ class IntegrationSpec extends AnyFreeSpec {
         fail(failure.message)
       case Right(tokens) =>
         val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
-        val tree = Parser.parse(preprocessedTokens, mutable.Stack.empty, mutable.Stack.empty)
+        val tree = Parser.parse(preprocessedTokens)
         tree match {
           case Left(failure) =>
             fail(failure.message)
@@ -40,7 +40,7 @@ class IntegrationSpec extends AnyFreeSpec {
         fail(failure.message)
       case Right(tokens) =>
         val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
-        val tree = Parser.parse(preprocessedTokens, mutable.Stack.empty, mutable.Stack.empty)
+        val tree = Parser.parse(preprocessedTokens)
         tree match {
           case Left(failure) =>
             fail(failure.message)
@@ -60,7 +60,7 @@ class IntegrationSpec extends AnyFreeSpec {
         fail(failure.message)
       case Right(tokens) =>
         val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
-        val tree = Parser.parse(preprocessedTokens, mutable.Stack.empty, mutable.Stack.empty)
+        val tree = Parser.parse(preprocessedTokens)
         tree match {
           case Left(failure) =>
             fail(failure.message)
