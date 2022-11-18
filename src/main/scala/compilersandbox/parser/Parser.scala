@@ -4,12 +4,14 @@ import compilersandbox.tokenizer
 import compilersandbox.tokenizer.Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
 import compilersandbox.util.Location
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 object Parser {
 
   def parse(initialInput: List[Token]): Either[ParsingFailure, Node] = {
 
+    @tailrec
     def parse(input: List[Token], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Either[ParsingFailure, Node] = {
 
       def currentLocation(): Location = {
@@ -48,7 +50,7 @@ object Parser {
               case OpenParenthesis =>
                 operatorStack.pop()
                 Right(())
-              case CloseParenthesis => // this case should never happen
+              case CloseParenthesis =>
                 throw IllegalStateException("Encountered an unexpected closing parenthesis!")
               case Add | Sub | Mul | Div | Pow =>
                 makeBinaryOperatorNode(operatorStack, nodeStack) match {
@@ -122,11 +124,11 @@ object Parser {
         }
       }
 
-      val result = input.headOption match {
+      input.headOption match {
         case Some(token) =>
-          val result: Either[ParsingFailure, Unit] = token match {
+          token match {
             case Ident(value) =>
-              value match {
+              val result = value match {
                 case "+" =>
                   insertOperator(Add, operatorStack, nodeStack)
                 case "-" =>
@@ -146,34 +148,37 @@ object Parser {
                 case _ =>
                   Left(ParsingFailure(s"unknown token: $value", initialInput, currentLocation()))
               }
+              result match {
+                case Left(failure) =>
+                  Left(failure)
+                case _ =>
+                  parse(input.tail, operatorStack, nodeStack)
+              }
             case Literal(value) =>
               nodeStack.push(OperandNode(Operand(value.toDouble)))
-              Right(())
+              parse(input.tail, operatorStack, nodeStack)
             case FloatingPointLiteral(value) =>
               nodeStack.push(OperandNode(Operand(value.toDouble)))
-              Right(())
+              parse(input.tail, operatorStack, nodeStack)
             case Parenthesis(value) =>
               value match {
                 case ParenthesisKind.Open =>
                   insertOperator(OpenParenthesis, operatorStack, nodeStack)
                 case ParenthesisKind.Close =>
                   insertOperator(CloseParenthesis, operatorStack, nodeStack)
+              } match {
+                case Left(failure) =>
+                  Left(failure)
+                case _ =>
+                  parse(input.tail, operatorStack, nodeStack)
               }
             case Start | End =>
-              Right(())
-          }
-          result match {
-            case Left(failure) =>
-              Left(failure)
-            case _ =>
               parse(input.tail, operatorStack, nodeStack)
           }
         case None =>
-          val result = drainOperatorStack(operatorStack, nodeStack)
-          result
+          drainOperatorStack(operatorStack, nodeStack)
       }
 
-      result
     }
 
     parse(initialInput, mutable.Stack.empty, mutable.Stack.empty)

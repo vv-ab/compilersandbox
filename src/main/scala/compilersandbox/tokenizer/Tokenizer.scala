@@ -26,7 +26,7 @@ object Tokenizer {
                 case FloatingPointLiteral(previousValue) =>
                   tokenize(input.tail, FloatingPointLiteral(s"$previousValue$digit"), tokens)
                 case End =>
-                  ???
+                  throw IllegalStateException("Should never happen ;-)")
               }
             case Dot(dot) =>
               previous match {
@@ -35,7 +35,7 @@ object Tokenizer {
                 case Start | _: Ident | _: FloatingPointLiteral | Parenthesis(Open) | Parenthesis(Close) =>
                   Left(TokenizerFailure("unexpected token", initialInput, currentLocation()))
                 case End =>
-                  ???
+                  throw IllegalStateException("Should never happen ;-)")
               }
             case Letter(letter) =>
               previous match {
@@ -44,7 +44,7 @@ object Tokenizer {
                 case Ident(previousValue) =>
                   tokenize(input.tail, Ident(s"$previousValue$letter"), tokens)
                 case End =>
-                  ???
+                  throw IllegalStateException("Should never happen ;-)")
               }
             case '+' | '-' =>
               previous match {
@@ -53,28 +53,28 @@ object Tokenizer {
                 case _: Literal | _: FloatingPointLiteral | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case End =>
-                  ???
+                  throw IllegalStateException("Should never happen ;-)")
               }
             case '*' | '/' | '^' =>
               previous match {
                 case Start | _: FloatingPointLiteral | _: Literal | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case End =>
-                  ???
+                  throw IllegalStateException("Should never happen ;-)")
               }
             case '(' =>
               previous match {
                 case Start | _: Literal | _: FloatingPointLiteral | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Parenthesis(Open), tokens :+ previous)
                 case End =>
-                  ???
+                  throw IllegalStateException("Should never happen ;-)")
               }
             case ')' =>
               previous match {
                 case Start | _: Literal | _: FloatingPointLiteral | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Parenthesis(Close), tokens :+ previous)
                 case End =>
-                  ???
+                  throw IllegalStateException("Should never happen ;-)")
               }
           }
         case None =>

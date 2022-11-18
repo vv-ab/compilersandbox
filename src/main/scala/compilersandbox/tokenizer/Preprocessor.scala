@@ -17,7 +17,7 @@ object Preprocessor {
                   case _: Ident | Start | Parenthesis(Open) =>
                     preprocess(input.tail, result :+ currentToken)
                   case End =>
-                    ??? // should never happen
+                    throw IllegalStateException("Should never happen ;-)")
                   case Parenthesis(Close) | _: Literal | _: FloatingPointLiteral =>
                     val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
@@ -32,7 +32,7 @@ object Preprocessor {
                   case _: Ident | Start | Parenthesis(Open) =>
                     preprocess(input.tail, result :+ currentToken)
                   case _: Literal | _: FloatingPointLiteral | End =>
-                    ??? // should never happen
+                    throw IllegalStateException("Should never happen ;-)")
                   case Parenthesis(Close) =>
                     val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
