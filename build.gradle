@@ -6,9 +6,12 @@ buildscript {
         classpath 'ch.epfl.scala:gradle-bloop_2.13:1.5.3-28-373a64c9'
     }
 }
-
+apply plugin: "maven-publish"
 apply plugin: "scala"
 apply plugin: "bloop"
+
+version = "0.1.0"
+group = "vv-ab"
 
 repositories {
     mavenCentral()
@@ -18,4 +21,22 @@ dependencies {
     implementation "org.scala-lang:scala3-library_3:3.2.0"
     testImplementation "org.scalatest:scalatest_3:3.2.14"
     testImplementation "org.scalatestplus:junit-4-13_3:3.2.12.0"
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/vv-ab/compilersandbox")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }

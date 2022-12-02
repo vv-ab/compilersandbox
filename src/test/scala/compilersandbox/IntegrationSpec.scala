@@ -71,4 +71,18 @@ class IntegrationSpec extends AnyFreeSpec {
 
     }
   }
+
+  "should fail on 9++" ignore {
+
+    val input = "9++"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        assert(tree.isLeft)
+    }
+  }
 }
