@@ -10,7 +10,7 @@ apply plugin: "maven-publish"
 apply plugin: "scala"
 apply plugin: "bloop"
 
-version = "0.1.1"
+version = "0.1.2"
 group = "vv-ab"
 
 ext {
