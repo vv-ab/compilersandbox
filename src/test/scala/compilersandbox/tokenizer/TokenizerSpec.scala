@@ -183,6 +183,13 @@ class TokenizerSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
+    "should fail on 4++" ignore {
 
+      val input = "4++"
+      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val result = Tokenizer.tokenize(input)
+
+      assert(result == expected)
+    }
   }
 }

@@ -72,7 +72,7 @@ class IntegrationSpec extends AnyFreeSpec {
     }
   }
 
-  "should fail on 9++" ignore {
+  "should fail on 9++" in {
 
     val input = "9++"
     val tokens = Tokenizer.tokenize(input)

@@ -1,6 +1,7 @@
 package compilersandbox.parser
 
 import compilersandbox.tokenizer
+import compilersandbox.tokenizer.Tokens
 import compilersandbox.tokenizer.Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
 import compilersandbox.util.Location
 
@@ -155,8 +156,13 @@ object Parser {
                   parse(input.tail, operatorStack, nodeStack)
               }
             case Literal(value) =>
-              nodeStack.push(OperandNode(Operand(value.toDouble)))
-              parse(input.tail, operatorStack, nodeStack)
+              value.toDoubleOption match {
+                case Some(double) =>
+                  nodeStack.push(OperandNode(Operand(double)))
+                  parse(input.tail, operatorStack, nodeStack)
+                case None =>
+                  Left(ParsingFailure(s"Literal is not a number: $value", initialInput, currentLocation()))
+              }
             case FloatingPointLiteral(value) =>
               nodeStack.push(OperandNode(Operand(value.toDouble)))
               parse(input.tail, operatorStack, nodeStack)
