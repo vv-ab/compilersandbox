@@ -3,6 +3,7 @@ package compilersandbox
 import compilersandbox.parser.Parser
 import compilersandbox.tokenizer.{Preprocessor, Tokenizer}
 import org.junit.runner.RunWith
+import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatestplus.junit.JUnitRunner
 
@@ -10,6 +11,8 @@ import scala.collection.mutable
 
 @RunWith(classOf[JUnitRunner])
 class IntegrationSpec extends AnyFreeSpec {
+
+  implicit val doubleEq: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(1e-4f)
 
   "Should compute 5+3" in {
 
@@ -26,7 +29,7 @@ class IntegrationSpec extends AnyFreeSpec {
             fail(failure.message)
           case Right(tree) =>
             val result = tree.compute()
-            assert(result == 8)
+            assert(result === 8)
         }
     }
   }
@@ -46,7 +49,7 @@ class IntegrationSpec extends AnyFreeSpec {
             fail(failure.message)
           case Right(tree) =>
             val result = tree.compute()
-            assert(result == 0)
+            assert(result === 0)
         }
     }
   }
@@ -66,7 +69,28 @@ class IntegrationSpec extends AnyFreeSpec {
             fail(failure.message)
           case Right(tree) =>
             val result = tree.compute()
-            assert(result == -50)
+            assert(result === -50)
+        }
+
+    }
+  }
+
+  "should compute sin(30)" in {
+
+    val input = "sin(30)"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = tree.compute()
+            assert(result === 0.50)
         }
 
     }
