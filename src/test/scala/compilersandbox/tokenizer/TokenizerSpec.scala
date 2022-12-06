@@ -191,5 +191,13 @@ class TokenizerSpec extends AnyFreeSpec {
 
       assert(result == expected)
     }
+
+    "should tokenize 9 +1" in {
+
+      val expected = Right(List(Start, Literal("9"), Ident("+"), Literal("1"), End))
+      val result = Tokenizer.tokenize("9 +1")
+
+      assert(result == expected)
+    }
   }
 }

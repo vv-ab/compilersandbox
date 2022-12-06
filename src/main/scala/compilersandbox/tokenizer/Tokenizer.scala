@@ -76,6 +76,13 @@ object Tokenizer {
                 case End =>
                   throw IllegalStateException("Should never happen ;-)")
               }
+             case ' ' =>
+               previous match {
+                 case End =>
+                   throw IllegalStateException("Should never happen ;-)")
+                 case _ =>
+                 tokenize(input.tail, previous, tokens)
+               }
           }
         case None =>
           Right((tokens :+ previous) :+ End)
