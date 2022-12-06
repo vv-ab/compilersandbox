@@ -5,11 +5,14 @@ import Tokens.ParenthesisKind.{Close, Open}
 import compilersandbox.tokenizer.Tokenizer.TokenizerFailure
 import compilersandbox.util.Location
 import org.junit.runner.RunWith
+import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class TokenizerSpec extends AnyFreeSpec {
+
+  implicit val doubleEq: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(1e-4f)
 
   "A Tokenizer" - {
 

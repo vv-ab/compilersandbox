@@ -29,7 +29,7 @@ class IntegrationSpec extends AnyFreeSpec {
             fail(failure.message)
           case Right(tree) =>
             val result = tree.compute()
-            assert(result === 8)
+            assert(result === 8.0)
         }
     }
   }
@@ -49,7 +49,7 @@ class IntegrationSpec extends AnyFreeSpec {
             fail(failure.message)
           case Right(tree) =>
             val result = tree.compute()
-            assert(result === 0)
+            assert(result === 0.0)
         }
     }
   }
@@ -69,7 +69,7 @@ class IntegrationSpec extends AnyFreeSpec {
             fail(failure.message)
           case Right(tree) =>
             val result = tree.compute()
-            assert(result === -50)
+            assert(result === -50.0)
         }
 
     }

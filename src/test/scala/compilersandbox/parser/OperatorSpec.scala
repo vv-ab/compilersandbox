@@ -1,11 +1,14 @@
 package compilersandbox.parser
 
 import org.junit.runner.RunWith
+import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class OperatorSpec extends AnyFreeSpec {
+
+  implicit val doubleEq: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(1e-4f)
 
   "An Add Operator" - {
 
@@ -63,7 +66,7 @@ class OperatorSpec extends AnyFreeSpec {
   "A Tan Operator" - {
 
     "should compute tan(50)" in {
-      assert(Tan.compute(50, 0) == Math.tan(Math.toRadians(50)).asInstanceOf[Int])
+      assert(Tan.compute(50, 0) === Math.tan(Math.toRadians(50)))
     }
   }
 }
