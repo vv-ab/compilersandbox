@@ -39,6 +39,8 @@ object Tokenizer {
               }
             case Letter(letter) =>
               previous match {
+                case Ident("pi") | Ident("sin") | Ident("tan") | Ident("cos") =>
+                  tokenize(input.tail, Ident(s"$letter"), tokens :+ previous)
                 case Start | Ident(Operator(_)) | _: Literal | _: FloatingPointLiteral | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$letter"), tokens :+ previous)
                 case Ident(previousValue) =>
@@ -48,10 +50,10 @@ object Tokenizer {
               }
             case '+' | '-' =>
               previous match {
+                case Ident("pi") | _: Literal | _: FloatingPointLiteral | Parenthesis(Close) =>
+                  tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case Start | _: Ident | Parenthesis(Open) =>
                   tokenize(input.tail, Literal(s"$character"), tokens :+ previous)
-                case _: Literal | _: FloatingPointLiteral | Parenthesis(Close) =>
-                  tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case End =>
                   throw IllegalStateException("Should never happen ;-)")
               }

@@ -95,7 +95,7 @@ class IntegrationSpec extends AnyFreeSpec {
 
     }
   }
-  
+
   "should compute SIN(30)" in {
 
     val input = "SIN(30)"
@@ -128,6 +128,26 @@ class IntegrationSpec extends AnyFreeSpec {
         val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
         val tree = Parser.parse(preprocessedTokens)
         assert(tree.isLeft)
+    }
+  }
+
+  "should compute expressions with constants" in {
+
+    val input = "3pi"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = tree.compute()
+            assert(result === 9.42477796077)
+        }
     }
   }
 }

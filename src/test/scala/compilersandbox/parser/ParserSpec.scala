@@ -294,5 +294,15 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should parse pi" in {
+
+      val input = List(Start, FloatingPointLiteral("pi"), End)
+      val expectation = Right(OperandNode(Operand(Math.PI)))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
   }
 }

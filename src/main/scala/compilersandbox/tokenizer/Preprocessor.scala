@@ -22,6 +22,23 @@ object Preprocessor {
                     val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
                 }
+              case None => ??? // error
+            }
+          case Ident("pi") =>
+            result.lastOption match {
+              case Some(value) =>
+                value match {
+                  case End =>
+                    throw IllegalStateException("Should never happen ;-)")
+                  case Start | _: Ident | Parenthesis(Open)=>
+                    val pi = FloatingPointLiteral("pi")
+                    preprocess(input.tail, result :+ pi)
+                  case _: Literal | Parenthesis(Close) | _: FloatingPointLiteral =>
+                    val pi = FloatingPointLiteral("pi")
+                    val unseenOperator = Ident("*")
+                    preprocess(input.tail, (result :+ unseenOperator) :+ pi)
+                }
+              case None => ??? // error
             }
           case _: Ident | Start | End =>
             preprocess(input.tail, result :+ currentToken)
@@ -31,11 +48,11 @@ object Preprocessor {
                 value match {
                   case _: Ident | Start | Parenthesis(Open) =>
                     preprocess(input.tail, result :+ currentToken)
-                  case _: Literal | _: FloatingPointLiteral | End =>
-                    throw IllegalStateException("Should never happen ;-)")
-                  case Parenthesis(Close) =>
+                  case FloatingPointLiteral("pi") | Parenthesis(Close) =>
                     val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
+                  case _: Literal | _: FloatingPointLiteral | End =>
+                    throw IllegalStateException("Should never happen ;-)")
                 }
               case None => ??? // error
             }

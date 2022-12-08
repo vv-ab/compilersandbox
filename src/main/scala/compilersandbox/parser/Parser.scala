@@ -164,8 +164,14 @@ object Parser {
                   Left(ParsingFailure(s"Literal is not a number: $value", initialInput, currentLocation()))
               }
             case FloatingPointLiteral(value) =>
-              nodeStack.push(OperandNode(Operand(value.toDouble)))
-              parse(input.tail, operatorStack, nodeStack)
+              value match {
+                case "pi" =>
+                  nodeStack.push(OperandNode(Operand(Math.PI)))
+                  parse(input.tail, operatorStack, nodeStack)
+                case _ =>
+                  nodeStack.push(OperandNode(Operand(value.toDouble)))
+                  parse(input.tail, operatorStack, nodeStack)
+                  }
             case Parenthesis(value) =>
               value match {
                 case ParenthesisKind.Open =>

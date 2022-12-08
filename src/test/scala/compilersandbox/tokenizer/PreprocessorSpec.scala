@@ -74,5 +74,21 @@ class PreprocessorSpec extends AnyFreeSpec {
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
+
+    "should process pi" in {
+
+      val input = List(Start, Ident("pi"), End)
+      val expected = List(Start, FloatingPointLiteral("pi"), End)
+      val result = Preprocessor.preprocess(input, List.empty)
+      assert(result == expected)
+    }
+
+    "should process 3pi" in {
+
+      val input = List(Start, Literal("3"), Ident("pi"), End)
+      val expected = List(Start, Literal("3"), Ident("*"), FloatingPointLiteral("pi"), End)
+      val result = Preprocessor.preprocess(input, List.empty)
+      assert((result == expected))
+    }
   }
 }
