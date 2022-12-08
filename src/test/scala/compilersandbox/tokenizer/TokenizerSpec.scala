@@ -202,5 +202,13 @@ class TokenizerSpec extends AnyFreeSpec {
 
       assert(result == expected)
     }
+
+    "should tokenize SIN()" in {
+
+      val expected = Right(List(Start, Ident("sin"), Parenthesis(Open), Parenthesis(Close), End))
+      val result = Tokenizer.tokenize("SIN()")
+
+      assert(result == expected)
+    }
   }
 }

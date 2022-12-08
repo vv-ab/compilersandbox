@@ -90,7 +90,7 @@ object Tokenizer {
 
     }
 
-    tokenize(initialInput, Start, List.empty)
+    tokenize(initialInput.toLowerCase, Start, List.empty)
   }
 
   object Digit {
