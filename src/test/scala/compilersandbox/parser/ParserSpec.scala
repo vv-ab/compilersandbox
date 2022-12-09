@@ -304,5 +304,15 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should fail on sin()" ignore {
+
+      val input = List(Start, Ident("sin"), Parenthesis(Open), Parenthesis(Close), End)
+      val expectation = Left(ParsingFailure("missing operand", input, Location(5)))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
   }
 }

@@ -60,10 +60,10 @@ object Preprocessor {
             result.lastOption match {
               case Some(value) =>
                 value match {
-                  case _: Ident | _: Literal | _: FloatingPointLiteral | Start | Parenthesis(Close) =>
+                  case _: Ident | _: Literal | _: FloatingPointLiteral | Start | Parenthesis(Close) | Parenthesis(Open) =>
                     preprocess(input.tail, result :+ currentToken)
-                  case End | Parenthesis(Open) =>
-                    ??? // error
+                  case End =>
+                    throw IllegalStateException("Should never happen ;-)")
                 }
               case None => ???
             }
