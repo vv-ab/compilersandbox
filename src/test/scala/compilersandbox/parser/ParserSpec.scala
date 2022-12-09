@@ -1,7 +1,7 @@
 package compilersandbox.parser
 
 import compilersandbox.tokenizer.Tokens.ParenthesisKind.{Close, Open}
-import compilersandbox.tokenizer.Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.tokenizer.Tokens.{ConstantLiteral, End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
 import compilersandbox.util.Location
 import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
@@ -297,7 +297,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should parse pi" in {
 
-      val input = List(Start, FloatingPointLiteral("pi"), End)
+      val input = List(Start, ConstantLiteral("pi"), End)
       val expectation = Right(OperandNode(Operand(Math.PI)))
 
       val result = Parser.parse(input)

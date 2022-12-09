@@ -2,7 +2,7 @@ package compilersandbox.parser
 
 import compilersandbox.tokenizer
 import compilersandbox.tokenizer.Tokens
-import compilersandbox.tokenizer.Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.tokenizer.Tokens.{ConstantLiteral, End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
 import compilersandbox.util.Location
 
 import scala.annotation.tailrec
@@ -164,14 +164,16 @@ object Parser {
                   Left(ParsingFailure(s"Literal is not a number: $value", initialInput, currentLocation()))
               }
             case FloatingPointLiteral(value) =>
+                  nodeStack.push(OperandNode(Operand(value.toDouble)))
+                  parse(input.tail, operatorStack, nodeStack)
+            case ConstantLiteral(value) =>
               value match {
                 case "pi" =>
                   nodeStack.push(OperandNode(Operand(Math.PI)))
                   parse(input.tail, operatorStack, nodeStack)
                 case _ =>
-                  nodeStack.push(OperandNode(Operand(value.toDouble)))
-                  parse(input.tail, operatorStack, nodeStack)
-                  }
+                  ???
+              }
             case Parenthesis(value) =>
               value match {
                 case ParenthesisKind.Open =>

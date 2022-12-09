@@ -1,7 +1,7 @@
 package compilersandbox.tokenizer
 
 import Tokens.ParenthesisKind.{Close, Open}
-import Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, Start, Token}
+import Tokens.{ConstantLiteral, End, FloatingPointLiteral, Ident, Literal, Parenthesis, Start, Token}
 import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatestplus.junit.JUnitRunner
@@ -78,7 +78,7 @@ class PreprocessorSpec extends AnyFreeSpec {
     "should process pi" in {
 
       val input = List(Start, Ident("pi"), End)
-      val expected = List(Start, FloatingPointLiteral("pi"), End)
+      val expected = List(Start, ConstantLiteral("pi"), End)
       val result = Preprocessor.preprocess(input, List.empty)
       assert(result == expected)
     }
@@ -86,9 +86,17 @@ class PreprocessorSpec extends AnyFreeSpec {
     "should process 3pi" in {
 
       val input = List(Start, Literal("3"), Ident("pi"), End)
-      val expected = List(Start, Literal("3"), Ident("*"), FloatingPointLiteral("pi"), End)
+      val expected = List(Start, Literal("3"), Ident("*"), ConstantLiteral("pi"), End)
       val result = Preprocessor.preprocess(input, List.empty)
-      assert((result == expected))
+      assert(result == expected)
+    }
+
+    "should process pipi" in {
+
+      val input = List(Start, Ident("pi"), Ident("pi"), End)
+      val expected = List(Start, ConstantLiteral("pi"), Ident("*"), ConstantLiteral("pi"), End)
+      val result = Preprocessor.preprocess(input, List.empty)
+      assert(result == expected)
     }
   }
 }

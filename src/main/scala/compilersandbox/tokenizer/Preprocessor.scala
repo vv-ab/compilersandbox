@@ -1,6 +1,6 @@
 package compilersandbox.tokenizer
 
-import Tokens.{Start, End, Ident, FloatingPointLiteral, Literal, Parenthesis, ParenthesisKind, Token}
+import Tokens.{ConstantLiteral, End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
 import Tokens.ParenthesisKind.{Close, Open}
 
 object Preprocessor {
@@ -31,10 +31,10 @@ object Preprocessor {
                   case End =>
                     throw IllegalStateException("Should never happen ;-)")
                   case Start | _: Ident | Parenthesis(Open)=>
-                    val pi = FloatingPointLiteral("pi")
+                    val pi = ConstantLiteral("pi")
                     preprocess(input.tail, result :+ pi)
-                  case _: Literal | Parenthesis(Close) | _: FloatingPointLiteral =>
-                    val pi = FloatingPointLiteral("pi")
+                  case _: Literal | Parenthesis(Close) | _: FloatingPointLiteral | _: ConstantLiteral =>
+                    val pi = ConstantLiteral("pi")
                     val unseenOperator = Ident("*")
                     preprocess(input.tail, (result :+ unseenOperator) :+ pi)
                 }

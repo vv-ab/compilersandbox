@@ -34,7 +34,12 @@ object Tokens {
 
     override def size(): Int = value.length
   }
+  
+  case class ConstantLiteral(value: String) extends Token {
 
+    override def size(): Int = value.length  
+  }
+  
   case class Parenthesis(value: ParenthesisKind) extends Token {
 
     override def size(): Int = 1
