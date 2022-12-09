@@ -69,4 +69,11 @@ class OperatorSpec extends AnyFreeSpec {
       assert(Tan.compute(50, 0) === Math.tan(Math.toRadians(50)))
     }
   }
+
+  "A Fac Operator" - {
+
+    "should compute 3!" in {
+      assert(Fac.compute(3, 0) == 3 * 2 * 1)
+    }
+  }
 }

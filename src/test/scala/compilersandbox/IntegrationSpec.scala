@@ -150,4 +150,64 @@ class IntegrationSpec extends AnyFreeSpec {
         }
     }
   }
+
+  "should compute 3!+33" in {
+
+    val input = "3!+33"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = tree.compute()
+            assert(result === 39.0)
+        }
+    }
+  }
+
+  "should compute sin(90)!" in {
+
+    val input = "sin(90)!"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = tree.compute()
+            assert(result === 1.0)
+        }
+    }
+  }
+
+  "should compute 3!/2" in {
+
+    val input = "3!/2"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = tree.compute()
+            assert(result === 3.0)
+        }
+    }
+  }
 }

@@ -334,5 +334,15 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should parse 4!" in {
+
+      val input = List(Start, Literal("4"), Ident("!"), End)
+      val expectation = Right(OperatorNode(Fac, OperandNode(Operand(4)), OperandNode(Operand(0))))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
   }
 }

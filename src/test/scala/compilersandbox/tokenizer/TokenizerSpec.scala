@@ -235,5 +235,13 @@ class TokenizerSpec extends AnyFreeSpec {
 
       assert(result == expected)
     }
+
+    "should tokenize !" in {
+
+      val expected = Right(List(Start, Ident("!"), End))
+      val result = Tokenizer.tokenize("!")
+
+      assert(result == expected)
+    }
   }
 }

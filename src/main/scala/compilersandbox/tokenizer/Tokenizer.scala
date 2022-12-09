@@ -50,14 +50,14 @@ object Tokenizer {
               }
             case '+' | '-' =>
               previous match {
-                case Ident("pi") | Ident("e") | _: Literal | _: FloatingPointLiteral | Parenthesis(Close) =>
+                case Ident("pi") | Ident("e") | Ident("!") | _: Literal | _: FloatingPointLiteral | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case Start | _: Ident | Parenthesis(Open) =>
                   tokenize(input.tail, Literal(s"$character"), tokens :+ previous)
                 case End =>
                   throw IllegalStateException("Should never happen ;-)")
               }
-            case '*' | '/' | '^' =>
+            case '*' | '/' | '^' | '!' =>
               previous match {
                 case Start | _: FloatingPointLiteral | _: Literal | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
@@ -101,7 +101,7 @@ object Tokenizer {
 
   object Operator {
     def unapply(value: String): Option[String] = value match {
-      case "+" | "-" | "*" | "/" | "^" =>
+      case "+" | "-" | "*" | "/" | "^" | "!" =>
         Some(value)
       case _ =>
         None

@@ -140,6 +140,33 @@ object Parser {
                   insertOperator(Div, operatorStack, nodeStack)
                 case "^" =>
                   insertOperator(Pow, operatorStack, nodeStack)
+                case "!" =>
+                  operatorStack.headOption match {
+                    case Some(head) if head.precedence() >= 3 =>
+                      val node: Either[ParsingFailure, Node] = head match {
+                        case OpenParenthesis | CloseParenthesis =>
+                          Left(ParsingFailure("", initialInput, currentLocation())) // throw IllegalStateException("Should never happen ;-)")
+                        case Add | Sub | Mul | Div | Pow =>
+                          makeBinaryOperatorNode(operatorStack, nodeStack)
+                        case Sin | Cos | Tan =>
+                          makeUnaryOperatorNode(operatorStack, nodeStack)
+                      }
+                      node match {
+                        case Right(value) =>
+                          nodeStack.push(value)
+                          val right = OperandNode(Operand(0))
+                          val left = nodeStack.pop()
+                          nodeStack.push(OperatorNode(Fac, left, right))
+                          Right(OperatorNode(Fac, left, right))
+                        case Left(failure) =>
+                          Left(failure)
+                      }
+                    case _ =>
+                      val right = OperandNode(Operand(0))
+                      val left = nodeStack.pop()
+                      nodeStack.push(OperatorNode(Fac, left, right))
+                      Right(OperatorNode(Fac, left, right))
+                  }
                 case "sin" =>
                   insertOperator(Sin, operatorStack, nodeStack)
                 case "cos" =>
@@ -151,7 +178,7 @@ object Parser {
               }
               result match {
                 case Left(failure) =>
-                  Left(failure)
+                  Left(ParsingFailure("", initialInput, currentLocation()))
                 case _ =>
                   parse(input.tail, operatorStack, nodeStack)
               }
