@@ -171,6 +171,9 @@ object Parser {
                 case "pi" =>
                   nodeStack.push(OperandNode(Operand(Math.PI)))
                   parse(input.tail, operatorStack, nodeStack)
+                case "e" =>
+                  nodeStack.push(OperandNode(Operand(Math.E)))
+                  parse(input.tail, operatorStack, nodeStack)
                 case _ =>
                   ???
               }

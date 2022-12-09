@@ -314,5 +314,25 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should parse e" in {
+
+      val input = List(Start, ConstantLiteral("e"), End)
+      val expectation = Right(OperandNode(Operand(Math.E)))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
+
+    "should parse e^8" in {
+
+      val input = List(Start, ConstantLiteral("e"), Ident("^"), Literal("8"), End)
+      val expectation = Right(OperatorNode(Pow, OperandNode(Operand(Math.E)), OperandNode(Operand(8))))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
   }
 }

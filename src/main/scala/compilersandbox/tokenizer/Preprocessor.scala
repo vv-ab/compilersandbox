@@ -40,6 +40,22 @@ object Preprocessor {
                 }
               case None => ??? // error
             }
+          case Ident("e") =>
+            result.lastOption match {
+              case Some(value) =>
+                value match {
+                  case End =>
+                    throw IllegalStateException("Should never happen ;-)")
+                  case Start | _: Ident | Parenthesis(Open) =>
+                    val e = ConstantLiteral("e")
+                    preprocess(input.tail, result :+ e)
+                  case _: Literal | Parenthesis(Close) | _: FloatingPointLiteral | _: ConstantLiteral =>
+                    val e = ConstantLiteral("e")
+                    val unseenOperator = Ident("*")
+                    preprocess(input.tail, (result :+ unseenOperator) :+ e)
+                }
+              case None => ??? // error
+            }
           case _: Ident | Start | End =>
             preprocess(input.tail, result :+ currentToken)
           case _: Literal | _: FloatingPointLiteral =>
