@@ -210,4 +210,44 @@ class IntegrationSpec extends AnyFreeSpec {
         }
     }
   }
+
+  "should compute sqrt(4)" in {
+
+    val input = "sqrt(4)"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = tree.compute()
+            assert(result === 2.0)
+        }
+    }
+  }
+
+  "should compute sqrt(36)/2" in {
+
+    val input = "sqrt(36)/2"
+    val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = tree.compute()
+            assert(result === 3.0)
+        }
+    }
+  }
 }

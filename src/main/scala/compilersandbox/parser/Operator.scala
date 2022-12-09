@@ -97,3 +97,11 @@ case object Fac extends Operator {
 
   override def precedence(): Int = 4
 }
+
+case object Sqrt extends Operator {
+
+  override def compute(left: Double, right: Double): Double = {
+    Math.sqrt(left)
+  }
+  override def precedence(): Int = 3
+}

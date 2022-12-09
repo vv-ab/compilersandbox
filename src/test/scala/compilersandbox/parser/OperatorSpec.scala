@@ -76,4 +76,11 @@ class OperatorSpec extends AnyFreeSpec {
       assert(Fac.compute(3, 0) == 3 * 2 * 1)
     }
   }
+
+  "A Sqrt Operator" - {
+
+    "should compute sqrt(4)" in {
+      assert(Sqrt.compute(4, 0) === Math.sqrt(4.0))
+    }
+  }
 }

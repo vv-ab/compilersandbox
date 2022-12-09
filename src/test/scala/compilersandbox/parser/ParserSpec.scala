@@ -305,7 +305,7 @@ class ParserSpec extends AnyFreeSpec {
       assert(result == expectation)
     }
 
-    "should fail on sin()" ignore {
+    "should fail on sin()" in {
 
       val input = List(Start, Ident("sin"), Parenthesis(Open), Parenthesis(Close), End)
       val expectation = Left(ParsingFailure("missing operand", input, Location(5)))
@@ -339,6 +339,16 @@ class ParserSpec extends AnyFreeSpec {
 
       val input = List(Start, Literal("4"), Ident("!"), End)
       val expectation = Right(OperatorNode(Fac, OperandNode(Operand(4)), OperandNode(Operand(0))))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
+
+    "should parse sqrt(4)" in {
+
+      val input = List(Start, Ident("sqrt"), Parenthesis(Open), Literal("4"), Parenthesis(Close), End)
+      val expectation = Right(OperatorNode(Sqrt, OperandNode(Operand(4)), OperandNode(Operand(0))))
 
       val result = Parser.parse(input)
 

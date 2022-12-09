@@ -10,7 +10,7 @@ object Preprocessor {
     input.headOption match {
       case Some(currentToken) =>
         currentToken match {
-          case Ident("cos") | Ident("sin") | Ident("tan") =>
+          case Ident("cos") | Ident("sin") | Ident("tan") | Ident("sqrt") =>
             result.lastOption match {
               case Some(value) =>
                 value match {

@@ -61,7 +61,7 @@ object Parser {
                   case Left(failure) =>
                     Left(failure)
                 }
-              case Sin | Cos | Tan =>
+              case Sin | Cos | Tan | Sqrt=>
                 val maybeNode = makeUnaryOperatorNode(operatorStack, nodeStack)
                 maybeNode match {
                   case Right(node) =>
@@ -71,7 +71,7 @@ object Parser {
                     Left(failure)
                 }
             }
-          case Add | Sub | Mul | Div | Pow | Sin | Cos | Tan =>
+          case Add | Sub | Mul | Div | Pow | Sin | Cos | Tan | Sqrt =>
             operatorStack.headOption match {
               case Some(head) if head.precedence() >= operator.precedence() =>
                 val node: Either[ParsingFailure, Node] = head match {
@@ -79,7 +79,7 @@ object Parser {
                     Left(ParsingFailure("", initialInput, currentLocation())) // throw IllegalStateException("Should never happen ;-)")
                   case Add | Sub | Mul | Div | Pow =>
                     makeBinaryOperatorNode(operatorStack, nodeStack)
-                  case Sin | Cos | Tan =>
+                  case Sin | Cos | Tan | Sqrt=>
                     makeUnaryOperatorNode(operatorStack, nodeStack)
                 }
                 node match {
@@ -104,7 +104,7 @@ object Parser {
             // throw IllegalStateException("Should never happen ;-)")
             case Add | Sub | Mul | Div | Pow =>
               makeBinaryOperatorNode(operatorStack, nodeStack)
-            case Sin | Cos | Tan =>
+            case Sin | Cos | Tan | Sqrt=>
               makeUnaryOperatorNode(operatorStack, nodeStack)
           }
           node match {
@@ -148,7 +148,7 @@ object Parser {
                           Left(ParsingFailure("", initialInput, currentLocation())) // throw IllegalStateException("Should never happen ;-)")
                         case Add | Sub | Mul | Div | Pow =>
                           makeBinaryOperatorNode(operatorStack, nodeStack)
-                        case Sin | Cos | Tan =>
+                        case Sin | Cos | Tan | Sqrt =>
                           makeUnaryOperatorNode(operatorStack, nodeStack)
                       }
                       node match {
@@ -173,6 +173,8 @@ object Parser {
                   insertOperator(Cos, operatorStack, nodeStack)
                 case "tan" =>
                   insertOperator(Tan, operatorStack, nodeStack)
+                case "sqrt" =>
+                  insertOperator(Sqrt, operatorStack, nodeStack)
                 case _ =>
                   Left(ParsingFailure(s"unknown token: $value", initialInput, currentLocation()))
               }
