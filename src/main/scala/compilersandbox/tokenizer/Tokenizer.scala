@@ -39,7 +39,7 @@ object Tokenizer {
               }
             case Letter(letter) =>
               previous match {
-                case Ident("pi") | Ident("sin") | Ident("tan") | Ident("cos") | Ident("e") =>
+                case Ident("pi") | Ident("sin") | Ident("tan") | Ident("cos") | Ident("e") | Ident("sqrt") =>
                   tokenize(input.tail, Ident(s"$letter"), tokens :+ previous)
                 case Start | Ident(Operator(_)) | _: Literal | _: FloatingPointLiteral | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$letter"), tokens :+ previous)

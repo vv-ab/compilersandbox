@@ -228,6 +228,14 @@ class TokenizerSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
+    "should tokenize esqrt" in {
+
+      val expected = Right(List(Start, Ident("e"), Ident("sqrt"), End))
+      val result = Tokenizer.tokenize("esqrt")
+
+      assert(result == expected)
+    }
+
     "should tokenize pi+" in {
 
       val expected = Right(List(Start, Ident("pi"), Ident("+"), End))

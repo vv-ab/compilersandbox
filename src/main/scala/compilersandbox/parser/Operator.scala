@@ -46,7 +46,6 @@ case object Div extends Operator {
 
   override def precedence(): Int = 2
 }
-
 case object Pow extends Operator {
   override def compute(left: Double, right: Double): Double = {
     Math.pow(left, right)
@@ -54,7 +53,6 @@ case object Pow extends Operator {
 
   override def precedence(): Int = 3
 }
-
 case object Sin extends Operator {
   override def compute(left: Double, right: Double): Double = {
     Math.sin(Math.toRadians(left))
@@ -62,7 +60,6 @@ case object Sin extends Operator {
 
   override def precedence(): Int = 5
 }
-
 case object Cos extends Operator {
   override def compute(left: Double, right: Double): Double = {
     Math.cos(Math.toRadians(left))
@@ -70,7 +67,6 @@ case object Cos extends Operator {
 
   override def precedence(): Int = 5
 }
-
 case object Tan extends Operator {
   override def compute(left: Double, right: Double): Double = {
     Math.tan(Math.toRadians(left))
@@ -78,7 +74,6 @@ case object Tan extends Operator {
 
   override def precedence(): Int = 5
 }
-
 case object Fac extends Operator {
 
   override def compute(left: Double, right: Double): Double = {
@@ -97,7 +92,6 @@ case object Fac extends Operator {
 
   override def precedence(): Int = 4
 }
-
 case object Sqrt extends Operator {
 
   override def compute(left: Double, right: Double): Double = {

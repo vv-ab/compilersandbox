@@ -115,7 +115,7 @@ class PreprocessorSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
-    "should parse sqrt(9)sqrt(9)" in {
+    "should process sqrt(9)sqrt(9)" in {
 
       val input = List(Start, Ident("sqrt"), Parenthesis(Open), Literal("9"), Parenthesis(Close), Ident("sqrt"), Parenthesis(Open), Literal("9"), Parenthesis(Close), End)
       val expected = List(Start, Ident("sqrt"), Parenthesis(Open), Literal("9"), Parenthesis(Close), Ident("*"), Ident("sqrt"), Parenthesis(Open), Literal("9"), Parenthesis(Close), End)
@@ -123,5 +123,13 @@ class PreprocessorSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
+
+    "should process pisqrt(9)" in {
+
+      val input = List(Start, Ident("pi"), Ident("sqrt"), Parenthesis(Open), Literal("9"), Parenthesis(Close), End)
+      val expected = List(Start, ConstantLiteral("pi"), Ident("*"), Ident("sqrt"), Parenthesis(Open), Literal("9"), Parenthesis(Close), End)
+      val result = Preprocessor.preprocess(input, List.empty)
+      assert(result == expected)
+    }
   }
 }
