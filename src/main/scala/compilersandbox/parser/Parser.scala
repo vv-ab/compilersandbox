@@ -142,7 +142,7 @@ object Parser {
                   insertOperator(Pow, operatorStack, nodeStack)
                 case "!" =>
                   operatorStack.headOption match {
-                    case Some(head) if head.precedence() >= 3 =>
+                    case Some(head) if head.precedence() >= Fac.precedence() =>
                       val node: Either[ParsingFailure, Node] = head match {
                         case OpenParenthesis | CloseParenthesis =>
                           Left(ParsingFailure("", initialInput, currentLocation())) // throw IllegalStateException("Should never happen ;-)")
@@ -151,16 +151,11 @@ object Parser {
                         case Sin | Cos | Tan | Sqrt =>
                           makeUnaryOperatorNode(operatorStack, nodeStack)
                       }
-                      node match {
-                        case Right(value) =>
-                          nodeStack.push(value)
-                          val right = OperandNode(Operand(0))
-                          val left = nodeStack.pop()
-                          nodeStack.push(OperatorNode(Fac, left, right))
-                          Right(OperatorNode(Fac, left, right))
-                        case Left(failure) =>
-                          Left(failure)
-                      }
+                      node.map({ value =>
+                        val right = OperandNode(Operand(0))
+                        nodeStack.push(OperatorNode(Fac, value, right))
+                        Right(OperatorNode(Fac, value, right))
+                      })
                     case _ =>
                       val right = OperandNode(Operand(0))
                       val left = nodeStack.pop()

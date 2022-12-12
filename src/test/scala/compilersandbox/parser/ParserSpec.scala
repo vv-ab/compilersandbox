@@ -354,5 +354,15 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should fail on 5.45!" ignore {
+
+      val input = List(Start, FloatingPointLiteral("5.45"), Ident("!"), End)
+      val expectation = Left(ParsingFailure("cannot compute faculty of floating literal", input, Location(2)))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
   }
 }
