@@ -1,16 +1,18 @@
 package compilersandbox
 
+import compilersandbox.compute.Compute
 import compilersandbox.parser.Parser
 import compilersandbox.tokenizer.{Preprocessor, Tokenizer}
 import org.junit.runner.RunWith
 import org.scalactic.{Equality, TolerantNumerics}
+import org.scalatest.Inside
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatestplus.junit.JUnitRunner
 
 import scala.collection.mutable
 
 @RunWith(classOf[JUnitRunner])
-class IntegrationSpec extends AnyFreeSpec {
+class IntegrationSpec extends AnyFreeSpec with Inside {
 
   implicit val doubleEq: Equality[Double] = TolerantNumerics.tolerantDoubleEquality(1e-4f)
 
@@ -48,8 +50,10 @@ class IntegrationSpec extends AnyFreeSpec {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 0.0)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 0.0)
+            }
         }
     }
   }

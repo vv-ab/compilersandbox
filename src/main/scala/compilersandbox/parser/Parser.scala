@@ -21,7 +21,7 @@ object Parser {
 
       def makeUnaryOperatorNode(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Either[ParsingFailure, Node] = {
         if (nodeStack.nonEmpty) {
-          val right = OperandNode(Operand(0))
+          val right = OperandNode(DecimalOperand(0))
           val left = nodeStack.pop()
           Right(OperatorNode(operatorStack.pop(), left, right))
         }
@@ -152,12 +152,12 @@ object Parser {
                           makeUnaryOperatorNode(operatorStack, nodeStack)
                       }
                       node.map({ value =>
-                        val right = OperandNode(Operand(0))
+                        val right = OperandNode(DecimalOperand(0))
                         nodeStack.push(OperatorNode(Fac, value, right))
                         Right(OperatorNode(Fac, value, right))
                       })
                     case _ =>
-                      val right = OperandNode(Operand(0))
+                      val right = OperandNode(DecimalOperand(0))
                       val left = nodeStack.pop()
                       nodeStack.push(OperatorNode(Fac, left, right))
                       Right(OperatorNode(Fac, left, right))
@@ -182,21 +182,21 @@ object Parser {
             case Literal(value) =>
               value.toDoubleOption match {
                 case Some(double) =>
-                  nodeStack.push(OperandNode(Operand(double)))
+                  nodeStack.push(OperandNode(DecimalOperand(double)))
                   parse(input.tail, operatorStack, nodeStack)
                 case None =>
                   Left(ParsingFailure(s"Literal is not a number: $value", initialInput, currentLocation()))
               }
             case FloatingPointLiteral(value) =>
-                  nodeStack.push(OperandNode(Operand(value.toDouble)))
+                  nodeStack.push(OperandNode(DecimalOperand(value.toDouble)))
                   parse(input.tail, operatorStack, nodeStack)
             case ConstantLiteral(value) =>
               value match {
                 case "pi" =>
-                  nodeStack.push(OperandNode(Operand(Math.PI)))
+                  nodeStack.push(OperandNode(DecimalOperand(Math.PI)))
                   parse(input.tail, operatorStack, nodeStack)
                 case "e" =>
-                  nodeStack.push(OperandNode(Operand(Math.E)))
+                  nodeStack.push(OperandNode(DecimalOperand(Math.E)))
                   parse(input.tail, operatorStack, nodeStack)
                 case _ =>
                   ???

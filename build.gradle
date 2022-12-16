@@ -15,7 +15,7 @@ group = "vv-ab"
 
 ext {
     additionalCompileOptions = [
-        "-no-ident",
+        "-no-indent",
         "-feature",
         "-Ycheck-all-patmat",
     ]

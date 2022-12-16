@@ -12,6 +12,6 @@ case class OperatorNode(operator: Operator, left: Node, right: Node) extends Nod
 
 case class OperandNode(operand: Operand) extends Node {
   override def compute(): Double = {
-    operand.value
+    operand.asInstanceOf[DecimalOperand].value // TODO remove cast
   }
 }
