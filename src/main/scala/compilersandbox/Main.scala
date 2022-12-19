@@ -21,11 +21,11 @@ def main(): Unit = {
       val tree = Parser.parse(preprocessedTokens)
       tree match {
         case Left(failure) =>
-          println(failure.message)
+          println(s"Error: ${failure.message}")
         case Right(tree) =>
           val result = Compute.compute(tree) match {
             case Left(value) =>
-              println(value)
+              println(s"Error: $value")
             case Right(value) =>
               value match {
                 case Left(value) =>
