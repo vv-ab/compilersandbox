@@ -1,6 +1,7 @@
 package compilersandbox.compute
 
-import compilersandbox.parser.{Add, DecimalOperand, Div, IntegerOperand, Mul, OperandNode, OperatorNode, Pow, Sub}
+import compilersandbox.compute.Compute.ComputeError
+import compilersandbox.parser.{Add, Cos, DecimalOperand, Div, Fac, IntegerOperand, Mul, OperandNode, OperatorNode, Pow, Sin, Sqrt, Sub, Tan}
 import org.junit.runner.RunWith
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.freespec.AnyFreeSpec
@@ -186,7 +187,103 @@ class ComputeSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
+    "Trigonometric expressions" - {
 
+      "should compute sine expression" in {
+
+        val tree = OperatorNode(Sin, OperandNode(DecimalOperand(80.0)), OperandNode(DecimalOperand(0)))
+        val result = Compute.compute(tree)
+        val expected = Right(Right(Math.sin(Math.toRadians(80.0))))
+
+        assert(result == expected)
+      }
+
+      "should compute 7*sin(90)-8" in {
+
+        val tree = OperatorNode(
+          Sub, OperatorNode(
+            Mul, OperandNode(IntegerOperand(7)), OperatorNode(
+              Sin, OperandNode(DecimalOperand(90)), OperandNode(DecimalOperand(0)))),
+          OperandNode(IntegerOperand(8)))
+        val result = Compute.compute(tree)
+        val expected = Right(Right(-1.00))
+
+        assert(result == expected)
+      }
+
+      "should compute a cosine expression" in {
+
+        val tree = OperatorNode(Cos, OperandNode(DecimalOperand(80.0)), OperandNode(DecimalOperand(0)))
+        val result = Compute.compute(tree)
+        val expected = Right(Right(Math.cos(Math.toRadians(80.0))))
+
+        assert(result == expected)
+      }
+
+      "should compute a tan expression" in {
+
+        val tree = OperatorNode(Tan, OperandNode(DecimalOperand(80.0)), OperandNode(DecimalOperand(0)))
+        val result = Compute.compute(tree)
+        val expected = Right(Right(Math.tan(Math.toRadians(80.0))))
+
+        assert(result == expected)
+      }
+
+      "should compute tan(88)+sin(120)-3*cos(0)" in {
+
+        val tree =
+          OperatorNode(
+            Sub, OperatorNode(
+            Add, OperatorNode(
+              Tan, OperandNode(DecimalOperand(88.0)), OperandNode(DecimalOperand(0.0))),
+                 OperatorNode(
+              Sin, OperandNode(DecimalOperand(120.0)), OperandNode(DecimalOperand(0.0)))),
+            OperatorNode(
+              Mul, OperandNode(DecimalOperand(3.0)),
+                OperatorNode(
+                  Cos, OperandNode(DecimalOperand(0.0)), OperandNode(DecimalOperand(0.0)))))
+        val result = Compute.compute(tree)
+        val expected = Right(Right(26.502278686699952))
+
+        assert(result == expected)
+      }
+    }
+
+    "should compute faculty" in {
+
+      val tree = OperatorNode(Fac, OperandNode(IntegerOperand(5)), OperandNode(IntegerOperand(0)))
+      val result = Compute.compute(tree)
+      val expected = Right(Left(120))
+
+      assert(result == expected)
+    }
+
+    "should fail on 3.2!" in {
+
+      val tree = OperatorNode(Fac, OperandNode(DecimalOperand(3.2)), OperandNode(IntegerOperand(0)))
+      val result = Compute.compute(tree)
+      val expected = Left(ComputeError("cannot compute expression"))
+
+      assert(result == expected)
+    }
+
+    "should compute sqrt" in {
+
+      val tree = OperatorNode(Sqrt, OperandNode(IntegerOperand(9)), OperandNode(IntegerOperand(0)))
+      val result = Compute.compute(tree)
+      val expected = Right(Right(Math.sqrt(9)))
+
+      assert(result == expected)
+    }
+
+    "should fail on sqrt(-4)" ignore {
+
+      val tree = OperatorNode(Sqrt, OperandNode(IntegerOperand(-4)), OperandNode(IntegerOperand(0)))
+      val result = Compute.compute(tree)
+      val expected = Left(ComputeError("cannot compute expression"))
+
+      assert(result == expected)
+    }
   }
 
 }

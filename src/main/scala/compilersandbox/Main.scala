@@ -3,6 +3,7 @@ package compilersandbox
 import compilersandbox.parser.Parser
 import compilersandbox.tokenizer.{Preprocessor, Tokenizer}
 import Tokenizer.TokenizerFailure
+import compilersandbox.compute.Compute
 
 import scala.collection.mutable
 
@@ -22,8 +23,17 @@ def main(): Unit = {
         case Left(failure) =>
           println(failure.message)
         case Right(tree) =>
-          val result = tree.compute()
-          println(s"Result: $result")
+          val result = Compute.compute(tree) match {
+            case Left(value) =>
+              println(value)
+            case Right(value) =>
+              value match {
+                case Left(value) =>
+                  println(s"Result: $value")
+                case Right(value) =>
+                  println(s"Result: $value")
+              }
+          }
       }
   }
 }

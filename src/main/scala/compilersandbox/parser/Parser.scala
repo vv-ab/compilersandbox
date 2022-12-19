@@ -41,6 +41,7 @@ object Parser {
         }
       }
 
+      @tailrec
       def insertOperator(operator: Operator, operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Either[ParsingFailure, Unit] = {
         operator match {
           case OpenParenthesis =>
@@ -70,12 +71,14 @@ object Parser {
                   case Left(failure) =>
                     Left(failure)
                 }
+              case Fac =>
+                Left(ParsingFailure("", initialInput, currentLocation()))
             }
           case Add | Sub | Mul | Div | Pow | Sin | Cos | Tan | Sqrt =>
             operatorStack.headOption match {
               case Some(head) if head.precedence() >= operator.precedence() =>
                 val node: Either[ParsingFailure, Node] = head match {
-                  case OpenParenthesis | CloseParenthesis =>
+                  case OpenParenthesis | CloseParenthesis | Fac =>
                     Left(ParsingFailure("", initialInput, currentLocation())) // throw IllegalStateException("Should never happen ;-)")
                   case Add | Sub | Mul | Div | Pow =>
                     makeBinaryOperatorNode(operatorStack, nodeStack)
@@ -96,15 +99,16 @@ object Parser {
         }
       }
 
+      @tailrec
       def drainOperatorStack(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Either[ParsingFailure, Node] = {
         if (operatorStack.nonEmpty) {
           val node = operatorStack.head match {
-            case OpenParenthesis | CloseParenthesis =>
+            case OpenParenthesis | CloseParenthesis | Fac =>
               Left(ParsingFailure("", initialInput, currentLocation()))
             // throw IllegalStateException("Should never happen ;-)")
             case Add | Sub | Mul | Div | Pow =>
               makeBinaryOperatorNode(operatorStack, nodeStack)
-            case Sin | Cos | Tan | Sqrt=>
+            case Sin | Cos | Tan | Sqrt =>
               makeUnaryOperatorNode(operatorStack, nodeStack)
           }
           node match {
@@ -174,22 +178,27 @@ object Parser {
                   Left(ParsingFailure(s"unknown token: $value", initialInput, currentLocation()))
               }
               result match {
-                case Left(failure) =>
+                case Left(_) =>
                   Left(ParsingFailure("", initialInput, currentLocation()))
                 case _ =>
                   parse(input.tail, operatorStack, nodeStack)
               }
             case Literal(value) =>
-              value.toDoubleOption match {
-                case Some(double) =>
-                  nodeStack.push(OperandNode(DecimalOperand(double)))
+              value.toIntOption match {
+                case Some(value) =>
+                  nodeStack.push(OperandNode(IntegerOperand(value)))
                   parse(input.tail, operatorStack, nodeStack)
                 case None =>
-                  Left(ParsingFailure(s"Literal is not a number: $value", initialInput, currentLocation()))
+                  Left(ParsingFailure(s"Literal is not a integer number: $value", initialInput, currentLocation()))
               }
             case FloatingPointLiteral(value) =>
-                  nodeStack.push(OperandNode(DecimalOperand(value.toDouble)))
+              value.toDoubleOption match {
+                case Some(value) =>
+                  nodeStack.push(OperandNode(DecimalOperand(value)))
                   parse(input.tail, operatorStack, nodeStack)
+                case None =>
+                  Left(ParsingFailure(s"Literal is not a decimal number: $value", initialInput, currentLocation()))
+              }
             case ConstantLiteral(value) =>
               value match {
                 case "pi" =>
@@ -199,7 +208,7 @@ object Parser {
                   nodeStack.push(OperandNode(DecimalOperand(Math.E)))
                   parse(input.tail, operatorStack, nodeStack)
                 case _ =>
-                  ???
+                  Left(ParsingFailure("", initialInput, currentLocation()))
               }
             case Parenthesis(value) =>
               value match {

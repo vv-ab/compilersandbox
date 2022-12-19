@@ -1,17 +1,7 @@
 package compilersandbox.parser
 
-sealed trait Node {
-  def compute(): Double
-}
+sealed trait Node {}
 
-case class OperatorNode(operator: Operator, left: Node, right: Node) extends Node {
-  override def compute(): Double = {
-    operator.compute(left.compute(), right.compute())
-  }
-}
+case class OperatorNode(operator: Operator, left: Node, right: Node) extends Node {}
 
-case class OperandNode(operand: Operand) extends Node {
-  override def compute(): Double = {
-    operand.asInstanceOf[DecimalOperand].value // TODO remove cast
-  }
-}
+case class OperandNode(operand: Operand) extends Node {}

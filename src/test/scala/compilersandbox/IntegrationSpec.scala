@@ -30,8 +30,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 8.0)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Left(value)) =>
+              assert(value === 8)
+            }
         }
     }
   }
@@ -72,8 +74,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === -50.0)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === -50.0)
+            }
         }
 
     }
@@ -93,8 +97,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 0.50)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 0.50)
+            }
         }
 
     }
@@ -114,8 +120,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 0.50)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 0.50)
+            }
         }
 
     }
@@ -149,8 +157,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 9.42477796077)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 9.42477796077)
+            }
         }
     }
   }
@@ -169,28 +179,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 39.0)
-        }
-    }
-  }
-
-  "should compute sin(90)!" in {
-
-    val input = "sin(90)!"
-    val tokens = Tokenizer.tokenize(input)
-    tokens match {
-      case Left(failure) =>
-        fail(failure.message)
-      case Right(tokens) =>
-        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
-        val tree = Parser.parse(preprocessedTokens)
-        tree match {
-          case Left(failure) =>
-            fail(failure.message)
-          case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 1.0)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Left(value)) =>
+              assert(value === 39)
+            }
         }
     }
   }
@@ -209,8 +201,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 3.0)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 3.0)
+            }
         }
     }
   }
@@ -229,8 +223,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 2.0)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 2.0)
+            }
         }
     }
   }
@@ -249,8 +245,10 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
           case Left(failure) =>
             fail(failure.message)
           case Right(tree) =>
-            val result = tree.compute()
-            assert(result === 3.0)
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 3.0)
+            }
         }
     }
   }

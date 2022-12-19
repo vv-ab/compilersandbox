@@ -6,7 +6,7 @@ import compilersandbox.tokenizer.Tokenizer.Operator
 import scala.collection.mutable
 object Compute {
 
-  case class ComputeError()
+  case class ComputeError(message: String)
 
   def compute(tree: Node): Either[ComputeError, Either[Int, Double]] = {
 
@@ -66,16 +66,35 @@ object Compute {
             case (IntegerOperand(left), IntegerOperand(right)) =>
               operandStack.push(IntegerOperand(Math.pow(left, right).asInstanceOf[Int]))
           }
-        case Sin => ???
-        case Cos => ???
-        case Tan => ???
-        case Fac => ???
-        case Sqrt => ???
+        case Sin =>
+          val left = toDouble(operandStack.pop())
+          val right = toDouble(operandStack.pop())
+          operandStack.push(DecimalOperand(Math.sin(Math.toRadians(left))))
+        case Cos =>
+          val left = toDouble(operandStack.pop())
+          val right = toDouble(operandStack.pop())
+          operandStack.push(DecimalOperand(Math.cos(Math.toRadians(left))))
+        case Tan =>
+          val left = toDouble(operandStack.pop())
+          operandStack.pop()
+          operandStack.push(DecimalOperand(Math.tan(Math.toRadians(left))))
+        case Fac =>
+          operandStack.pop() match {
+            case DecimalOperand(left) =>
+              operandStack.pop()
+              return Left(ComputeError("cannot compute expression"))
+            case IntegerOperand(value) =>
+              operandStack.pop()
+              operandStack.push(IntegerOperand(faculty(value)))
+          }
+        case Sqrt =>
+          val left = toDouble(operandStack.pop())
+          operandStack.pop()
+          operandStack.push(DecimalOperand(Math.sqrt(left)))
         case operand: Operand =>
           operandStack.push(operand)
       }
     }
-
     operandStack.pop() match {
       case DecimalOperand(value) =>
         Right(Right(value))
@@ -84,6 +103,17 @@ object Compute {
     }
   }
 
+
+
+  def faculty(x: Int): Int = {
+    if (x == 0) {
+      1
+    }
+    else {
+      x * faculty(x - 1)
+
+    }
+  }
   def linearize(tree: Node): List[Operator | Operand] = {
 
     val result = mutable.ListBuffer[Operator | Operand]()
