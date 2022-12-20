@@ -1,5 +1,6 @@
 package compilersandbox
 
+import compilersandbox.analyser.Analyser
 import compilersandbox.compute.Compute
 import compilersandbox.parser.Parser
 import compilersandbox.tokenizer.{Preprocessor, Tokenizer}
@@ -235,6 +236,29 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
 
     val input = "sqrt(36)/2"
     val tokens = Tokenizer.tokenize(input)
+    tokens match {
+      case Left(failure) =>
+        fail(failure.message)
+      case Right(tokens) =>
+        val preprocessedTokens = Preprocessor.preprocess(tokens, List.empty)
+        val tree = Parser.parse(preprocessedTokens)
+        tree match {
+          case Left(failure) =>
+            fail(failure.message)
+          case Right(tree) =>
+            val result = Compute.compute(tree)
+            inside(result) { case Right(Right(value)) =>
+              assert(value === 3.0)
+            }
+        }
+    }
+  }
+
+  "should fail on 5.1!" ignore {
+
+    val input = "5.1!"
+    val tokens = Tokenizer.tokenize(input)
+
     tokens match {
       case Left(failure) =>
         fail(failure.message)

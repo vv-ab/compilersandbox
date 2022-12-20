@@ -1,7 +1,17 @@
 package compilersandbox.parser
 
-sealed trait Operand
+enum DataType {
+  case Decimal, Integer
+}
 
-case class DecimalOperand(value: Double) extends Operand
+sealed trait Operand {
+  val dataType: DataType
+}
 
-case class IntegerOperand(value: Int) extends Operand
+case class DecimalOperand(value: Double) extends Operand {
+  override val dataType: DataType = DataType.Decimal
+}
+
+case class IntegerOperand(value: Int) extends Operand {
+  override val dataType: DataType = DataType.Integer
+}

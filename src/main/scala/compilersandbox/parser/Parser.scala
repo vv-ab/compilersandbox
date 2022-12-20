@@ -188,7 +188,7 @@ object Parser {
                   nodeStack.push(OperandNode(IntegerOperand(value)))
                   parse(input.tail, operatorStack, nodeStack)
                 case None =>
-                  Left(ParsingFailure(s"Literal is not a integer number: $value", initialInput, currentLocation()))
+                  Left(ParsingFailure(s"Literal is not an integer number: $value", initialInput, currentLocation()))
               }
             case DecimalLiteral(value) =>
               value.toDoubleOption match {

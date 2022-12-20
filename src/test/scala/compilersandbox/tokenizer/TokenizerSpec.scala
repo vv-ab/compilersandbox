@@ -251,5 +251,13 @@ class TokenizerSpec extends AnyFreeSpec {
 
       assert(result == expected)
     }
+
+    "should tokenize floor(1.4)" in {
+
+      val expected = Right(List(Start, Ident("floor"), Parenthesis(Open), DecimalLiteral("1.4"), Parenthesis(Close), End))
+      val result = Tokenizer.tokenize("floor(1.4)")
+
+      assert(result == expected)
+    }
   }
 }
