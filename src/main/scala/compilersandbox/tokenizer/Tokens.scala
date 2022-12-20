@@ -30,12 +30,12 @@ object Tokens {
     override def size(): Int = value.length
   }
 
-  case class FloatingPointLiteral(value: String) extends Token {
+  case class DecimalLiteral(value: String) extends Token {
 
     override def size(): Int = value.length
   }
   
-  case class ConstantLiteral(value: String) extends Token {
+  case class IntegerLiteral(value: String) extends Token {
 
     override def size(): Int = value.length  
   }

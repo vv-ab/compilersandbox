@@ -285,5 +285,4 @@ class ComputeSpec extends AnyFreeSpec {
       assert(result == expected)
     }
   }
-
 }

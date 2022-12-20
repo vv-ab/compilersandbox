@@ -23,7 +23,7 @@ def main(): Unit = {
         case Left(failure) =>
           println(s"Error: ${failure.message}")
         case Right(tree) =>
-          val result = Compute.compute(tree) match {
+          val result: Unit = Compute.compute(tree) match {
             case Left(value) =>
               println(s"Error: $value")
             case Right(value) =>

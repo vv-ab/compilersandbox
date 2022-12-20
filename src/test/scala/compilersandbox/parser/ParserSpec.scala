@@ -1,7 +1,7 @@
 package compilersandbox.parser
 
 import compilersandbox.tokenizer.Tokens.ParenthesisKind.{Close, Open}
-import compilersandbox.tokenizer.Tokens.{ConstantLiteral, End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.tokenizer.Tokens.{IntegerLiteral, End, DecimalLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
 import compilersandbox.util.Location
 import org.junit.runner.RunWith
 import org.scalatest.freespec.AnyFreeSpec
@@ -26,7 +26,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should parse an expression with subtraction" in {
 
-      val input = List(Start, FloatingPointLiteral("7.5"), Ident("-"), Literal("2"), End)
+      val input = List(Start, DecimalLiteral("7.5"), Ident("-"), Literal("2"), End)
       val expectation = Right(OperatorNode(Sub, OperandNode(DecimalOperand(7.5)), OperandNode(IntegerOperand(2))))
 
       val result = Parser.parse(input)
@@ -267,7 +267,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should parse 6.5-8" in {
 
-      val input = List(Start, FloatingPointLiteral("6.5"), Ident("-"), Literal("8"), End)
+      val input = List(Start, DecimalLiteral("6.5"), Ident("-"), Literal("8"), End)
       val expectation = Right(OperatorNode(Sub, OperandNode(DecimalOperand(6.5)), OperandNode(IntegerOperand(8))))
 
       val result = Parser.parse(input)
@@ -287,7 +287,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should fail on +." in {
 
-      val input = List(Start, FloatingPointLiteral("+."), End)
+      val input = List(Start, DecimalLiteral("+."), End)
       val expectation = Left(ParsingFailure("Literal is not a decimal number: +.", input, Location(1)))
 
       val result = Parser.parse(input)
@@ -307,7 +307,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should parse pi" in {
 
-      val input = List(Start, ConstantLiteral("pi"), End)
+      val input = List(Start, IntegerLiteral("pi"), End)
       val expectation = Right(OperandNode(DecimalOperand(Math.PI)))
 
       val result = Parser.parse(input)
@@ -327,7 +327,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should parse e" in {
 
-      val input = List(Start, ConstantLiteral("e"), End)
+      val input = List(Start, IntegerLiteral("e"), End)
       val expectation = Right(OperandNode(DecimalOperand(Math.E)))
 
       val result = Parser.parse(input)
@@ -337,7 +337,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should parse e^8" in {
 
-      val input = List(Start, ConstantLiteral("e"), Ident("^"), Literal("8"), End)
+      val input = List(Start, IntegerLiteral("e"), Ident("^"), Literal("8"), End)
       val expectation = Right(OperatorNode(Pow, OperandNode(DecimalOperand(Math.E)), OperandNode(IntegerOperand(8))))
 
       val result = Parser.parse(input)
@@ -367,7 +367,7 @@ class ParserSpec extends AnyFreeSpec {
 
     "should fail on 5.45!" ignore {
 
-      val input = List(Start, FloatingPointLiteral("5.45"), Ident("!"), End)
+      val input = List(Start, DecimalLiteral("5.45"), Ident("!"), End)
       val expectation = Left(ParsingFailure("cannot compute faculty of floating literal", input, Location(2)))
 
       val result = Parser.parse(input)

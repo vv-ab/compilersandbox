@@ -2,7 +2,7 @@ package compilersandbox.parser
 
 import compilersandbox.tokenizer
 import compilersandbox.tokenizer.Tokens
-import compilersandbox.tokenizer.Tokens.{ConstantLiteral, End, FloatingPointLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.tokenizer.Tokens.{IntegerLiteral, End, DecimalLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
 import compilersandbox.util.Location
 
 import scala.annotation.tailrec
@@ -190,7 +190,7 @@ object Parser {
                 case None =>
                   Left(ParsingFailure(s"Literal is not a integer number: $value", initialInput, currentLocation()))
               }
-            case FloatingPointLiteral(value) =>
+            case DecimalLiteral(value) =>
               value.toDoubleOption match {
                 case Some(value) =>
                   nodeStack.push(OperandNode(DecimalOperand(value)))
@@ -198,7 +198,7 @@ object Parser {
                 case None =>
                   Left(ParsingFailure(s"Literal is not a decimal number: $value", initialInput, currentLocation()))
               }
-            case ConstantLiteral(value) =>
+            case IntegerLiteral(value) =>
               value match {
                 case "pi" =>
                   nodeStack.push(OperandNode(DecimalOperand(Math.PI)))

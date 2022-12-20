@@ -1,6 +1,6 @@
 package compilersandbox.tokenizer
 
-import Tokens.{End, FloatingPointLiteral, Ident, Literal, Parenthesis, Start}
+import Tokens.{End, DecimalLiteral, Ident, Literal, Parenthesis, Start}
 import Tokens.ParenthesisKind.{Close, Open}
 import compilersandbox.tokenizer.Tokenizer.TokenizerFailure
 import compilersandbox.util.Location
@@ -146,7 +146,7 @@ class TokenizerSpec extends AnyFreeSpec {
 
     "should tokenize 1.2" in {
 
-      val expected = Right(List(Start, FloatingPointLiteral("1.2"), End))
+      val expected = Right(List(Start, DecimalLiteral("1.2"), End))
       val result = Tokenizer.tokenize("1.2")
 
       assert(result == expected)
