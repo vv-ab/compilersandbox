@@ -2,15 +2,15 @@ package compilersandbox.parser
 
 import compilersandbox.tokenizer
 import compilersandbox.tokenizer.Tokens
-import compilersandbox.tokenizer.Tokens.{IntegerLiteral, End, DecimalLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
-import compilersandbox.util.Location
+import compilersandbox.tokenizer.Tokens.{DecimalLiteral, End, Ident, IntegerLiteral, Literal, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.util.{Failure, Location}
 
 import scala.annotation.tailrec
 import scala.collection.mutable
 
 object Parser {
 
-  def parse(initialInput: List[Token]): Either[ParsingFailure, Node] = {
+  def parse(initialInput: List[Token]): Either[List[ParsingFailure], Node] = {
 
     @tailrec
     def parse(input: List[Token], operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Either[ParsingFailure, Node] = {
@@ -155,12 +155,12 @@ object Parser {
                           makeUnaryOperatorNode(operatorStack, nodeStack)
                       }
                       node.map({ value =>
-                        val right = OperandNode(DecimalOperand(0))
+                        val right = OperandNode(IntegerOperand(0))
                         nodeStack.push(OperatorNode(Fac, value, right))
                         Right(OperatorNode(Fac, value, right))
                       })
                     case _ =>
-                      val right = OperandNode(DecimalOperand(0))
+                      val right = OperandNode(IntegerOperand(0))
                       val left = nodeStack.pop()
                       nodeStack.push(OperatorNode(Fac, left, right))
                       Right(OperatorNode(Fac, left, right))
@@ -230,8 +230,8 @@ object Parser {
 
     }
 
-    parse(initialInput, mutable.Stack.empty, mutable.Stack.empty)
+    parse(initialInput, mutable.Stack.empty, mutable.Stack.empty).left.map(List(_))
   }
 }
 
-case class ParsingFailure(message: String, input: List[Token], location: Location)
+case class ParsingFailure(message: String, input: List[Token], location: Location) extends Failure

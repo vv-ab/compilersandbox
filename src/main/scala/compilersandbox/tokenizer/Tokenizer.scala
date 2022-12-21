@@ -1,12 +1,12 @@
 package compilersandbox.tokenizer
 
-import compilersandbox.tokenizer.Tokens.{End, DecimalLiteral, Ident, Literal, Parenthesis, Start, Token}
-import compilersandbox.util.Location
-import compilersandbox.tokenizer.Tokens.ParenthesisKind.{Open, Close}
+import compilersandbox.tokenizer.Tokens.{DecimalLiteral, End, Ident, Literal, Parenthesis, Start, Token}
+import compilersandbox.util.{Failure, Location}
+import compilersandbox.tokenizer.Tokens.ParenthesisKind.{Close, Open}
 
 object Tokenizer {
 
-  def tokenize(initialInput: String): Either[TokenizerFailure, List[Token]] = {
+  def tokenize(initialInput: String): Either[List[TokenizerFailure], List[Token]] = {
 
     def tokenize(input: Seq[Char], previous: Token, tokens: List[Token]): Either[TokenizerFailure, List[Token]] = {
 
@@ -92,7 +92,7 @@ object Tokenizer {
 
     }
 
-    tokenize(initialInput.toLowerCase, Start, List.empty)
+    tokenize(initialInput.toLowerCase, Start, List.empty).left.map(List(_))
   }
 
   object Digit {
@@ -116,6 +116,6 @@ object Tokenizer {
     def unapply(value: Char): Option[Char] = if (value.isLetter) Some(value) else None
   }
 
-  case class TokenizerFailure(message: String, input: String, location: Location)
+  case class TokenizerFailure(message: String, input: String, location: Location) extends Failure
 
 }

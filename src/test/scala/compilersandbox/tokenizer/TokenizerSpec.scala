@@ -171,7 +171,7 @@ class TokenizerSpec extends AnyFreeSpec {
     "should fail on ." in {
 
       val input = "."
-      val expected = Left(TokenizerFailure("unexpected token", input, Location(0)))
+      val expected = Left(List(TokenizerFailure("unexpected token", input, Location(0))))
       val result = Tokenizer.tokenize(input)
 
       assert(result == expected)
@@ -180,7 +180,7 @@ class TokenizerSpec extends AnyFreeSpec {
     "should fail on 8+7.8.*3" in {
 
       val input = "8+7.8.*3"
-      val expected = Left(TokenizerFailure("unexpected token", input, Location(5)))
+      val expected = Left(List(TokenizerFailure("unexpected token", input, Location(5))))
       val result = Tokenizer.tokenize(input)
 
       assert(result == expected)
@@ -189,7 +189,7 @@ class TokenizerSpec extends AnyFreeSpec {
     "should fail on 4++" ignore {
 
       val input = "4++"
-      val expected = Left(TokenizerFailure("unexpected token", input, Location(2)))
+      val expected = Left(List(TokenizerFailure("unexpected token", input, Location(2))))
       val result = Tokenizer.tokenize(input)
 
       assert(result == expected)

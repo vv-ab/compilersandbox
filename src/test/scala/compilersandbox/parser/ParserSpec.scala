@@ -177,7 +177,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 6*/3" ignore {
 
       val input = List(Start, Literal("6"), Ident("*"), Ident("/"), Literal("3"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(2)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(2))))
 
       val result = Parser.parse(input)
 
@@ -187,7 +187,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 6-/3" ignore {
 
       val input = List(Start, Literal("6"), Ident("-"), Ident("/"), Literal("3"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(2)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(2))))
 
       val result = Parser.parse(input)
 
@@ -207,7 +207,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on *8" ignore {
 
       val input = List(Start, Ident("*"), Literal("8"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(1)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(1))))
 
       val result = Parser.parse(input)
 
@@ -217,7 +217,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on *2+2" ignore {
 
       val input = List(Start, Ident("*"), Literal("8"), Ident("+"), Literal("2"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(0)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(0))))
 
       val result = Parser.parse(input)
 
@@ -227,7 +227,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 3+5*" ignore {
 
       val input = List(Start, Literal("3"), Ident("+"), Literal("5"), Ident("*"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(3)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(3))))
 
       val result = Parser.parse(input)
 
@@ -237,7 +237,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on sin" ignore {
 
       val input = List(Start, Ident("sin"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(0)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(0))))
 
       val result = Parser.parse(input)
 
@@ -247,7 +247,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on /" ignore {
 
       val input = List(Start, Ident("/"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(0)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(0))))
 
       val result = Parser.parse(input)
 
@@ -257,7 +257,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on ()" ignore {
 
       val input = List(Start, Parenthesis(Open), Parenthesis(Close), End)
-      val expectation = Left(ParsingFailure("", input, Location(1)))
+      val expectation = Left(List(ParsingFailure("", input, Location(1))))
 
       val result = Parser.parse(input)
 
@@ -278,7 +278,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 5+" ignore {
 
       val input = List(Start, Literal("5"), Ident("+"), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(1)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(1))))
 
       val result = Parser.parse(input)
 
@@ -288,7 +288,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on +." in {
 
       val input = List(Start, DecimalLiteral("+."), End)
-      val expectation = Left(ParsingFailure("Literal is not a decimal number: +.", input, Location(1)))
+      val expectation = Left(List(ParsingFailure("Literal is not a decimal number: +.", input, Location(1))))
 
       val result = Parser.parse(input)
 
@@ -298,7 +298,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 44()" ignore {
 
       val input = List(Start, Literal("44"), Ident("*"), Parenthesis(Open), Parenthesis(Close), End)
-      val expectation = Left(ParsingFailure("", input, Location(1)))
+      val expectation = Left(List(ParsingFailure("", input, Location(1))))
 
       val result = Parser.parse(input)
 
@@ -318,7 +318,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on sin()" in {
 
       val input = List(Start, Ident("sin"), Parenthesis(Open), Parenthesis(Close), End)
-      val expectation = Left(ParsingFailure("missing operand", input, Location(5)))
+      val expectation = Left(List(ParsingFailure("missing operand", input, Location(5))))
 
       val result = Parser.parse(input)
 
@@ -348,7 +348,7 @@ class ParserSpec extends AnyFreeSpec {
     "should parse 4!" in {
 
       val input = List(Start, Literal("4"), Ident("!"), End)
-      val expectation = Right(OperatorNode(Fac, OperandNode(IntegerOperand(4)), OperandNode(DecimalOperand(0.0))))
+      val expectation = Right(OperatorNode(Fac, OperandNode(IntegerOperand(4)), OperandNode(IntegerOperand(0))))
 
       val result = Parser.parse(input)
 
@@ -368,7 +368,7 @@ class ParserSpec extends AnyFreeSpec {
     "should fail on 5.45!" ignore {
 
       val input = List(Start, DecimalLiteral("5.45"), Ident("!"), End)
-      val expectation = Left(ParsingFailure("cannot compute faculty of floating literal", input, Location(2)))
+      val expectation = Left(List(ParsingFailure("cannot compute faculty of floating literal", input, Location(2))))
 
       val result = Parser.parse(input)
 

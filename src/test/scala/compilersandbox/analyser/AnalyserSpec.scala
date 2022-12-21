@@ -1,6 +1,6 @@
 package compilersandbox.analyser
 
-import compilersandbox.analyser.Analyser.AnalyserError
+import compilersandbox.analyser.Analyser.AnalyseFailure
 import compilersandbox.compute.Compute
 import compilersandbox.parser.*
 import org.junit.runner.RunWith
@@ -16,7 +16,7 @@ class AnalyserSpec extends AnyFreeSpec with Inside {
     "should analyse 5.5!" in {
 
       val input = OperatorNode(Fac, OperandNode(DecimalOperand(5.5)), OperandNode(IntegerOperand(0)))
-      val expected = List(AnalyserError(input, "Expected integer number for Faculty but got decimal!"))
+      val expected = List(AnalyseFailure(input, "Expected integer number for Faculty but got decimal!"))
 
       val result = Analyser.analyse(input)
       inside(result) { case Left(result) =>
@@ -27,8 +27,8 @@ class AnalyserSpec extends AnyFreeSpec with Inside {
     "should analyse (10/3)!" in {
 
       val input = OperatorNode(Fac, OperatorNode(Div,OperandNode(IntegerOperand(10)), OperandNode(IntegerOperand(3))),OperandNode(IntegerOperand(0)))
-      val expected = List(AnalyserError(input, "Expected integer number for Faculty but got decimal!"),
-        AnalyserError(input, "Expected integer number for Faculty but got decimal!"))
+      val expected = List(AnalyseFailure(input, "Expected integer number for Faculty but got decimal!"),
+        AnalyseFailure(input, "Expected integer number for Faculty but got decimal!"))
 
       val result = Analyser.analyse(input)
       inside(result) { case Left(result) =>
@@ -40,8 +40,8 @@ class AnalyserSpec extends AnyFreeSpec with Inside {
 
       val input = OperatorNode(Mul, OperatorNode(Fac,OperandNode(DecimalOperand(1.5)),OperandNode(IntegerOperand(0))),
         OperatorNode(Fac,OperandNode(DecimalOperand(0.2)),OperandNode(IntegerOperand(0))))
-      val expected = List(AnalyserError(OperatorNode(Fac,OperandNode(DecimalOperand(0.2)),OperandNode(IntegerOperand(0))),"Expected integer number for Faculty but got decimal!"),
-        AnalyserError(OperatorNode(Fac,OperandNode(DecimalOperand(1.5)),OperandNode(IntegerOperand(0))),"Expected integer number for Faculty but got decimal!"))
+      val expected = List(AnalyseFailure(OperatorNode(Fac,OperandNode(DecimalOperand(0.2)),OperandNode(IntegerOperand(0))),"Expected integer number for Faculty but got decimal!"),
+        AnalyseFailure(OperatorNode(Fac,OperandNode(DecimalOperand(1.5)),OperandNode(IntegerOperand(0))),"Expected integer number for Faculty but got decimal!"))
 
       val result = Analyser.analyse(input)
       inside(result) { case Left(result) =>

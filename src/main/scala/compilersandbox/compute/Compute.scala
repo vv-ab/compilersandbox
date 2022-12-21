@@ -2,13 +2,14 @@ package compilersandbox.compute
 
 import compilersandbox.parser.*
 import compilersandbox.tokenizer.Tokenizer.Operator
+import compilersandbox.util.Failure
 
 import scala.collection.mutable
 object Compute {
 
-  case class ComputeError(message: String)
+  case class ComputeFailure(message: String) extends Failure
 
-  def compute(tree: Node): Either[ComputeError, Either[Int, Double]] = {
+  def compute(tree: Node): Either[List[ComputeFailure], Either[Int, Double]] = {
 
     val nodes = mutable.Stack(linearize(tree).reverse*)
     val operandStack: mutable.Stack[Operand] = mutable.Stack()
@@ -82,7 +83,7 @@ object Compute {
           operandStack.pop() match {
             case DecimalOperand(left) =>
               operandStack.pop()
-              return Left(ComputeError("cannot compute expression"))
+              return Left(List(ComputeFailure("cannot compute expression")))
             case IntegerOperand(value) =>
               operandStack.pop()
               operandStack.push(IntegerOperand(faculty(value)))

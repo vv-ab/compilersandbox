@@ -1,6 +1,6 @@
 package compilersandbox.compute
 
-import compilersandbox.compute.Compute.ComputeError
+import compilersandbox.compute.Compute.ComputeFailure
 import compilersandbox.parser.{Add, Cos, DecimalOperand, Div, Fac, IntegerOperand, Mul, OperandNode, OperatorNode, Pow, Sin, Sqrt, Sub, Tan}
 import org.junit.runner.RunWith
 import org.scalactic.{Equality, TolerantNumerics}
@@ -262,7 +262,7 @@ class ComputeSpec extends AnyFreeSpec {
 
       val tree = OperatorNode(Fac, OperandNode(DecimalOperand(3.2)), OperandNode(IntegerOperand(0)))
       val result = Compute.compute(tree)
-      val expected = Left(ComputeError("cannot compute expression"))
+      val expected = Left(List(ComputeFailure("cannot compute expression")))
 
       assert(result == expected)
     }
@@ -272,15 +272,6 @@ class ComputeSpec extends AnyFreeSpec {
       val tree = OperatorNode(Sqrt, OperandNode(IntegerOperand(9)), OperandNode(IntegerOperand(0)))
       val result = Compute.compute(tree)
       val expected = Right(Right(Math.sqrt(9)))
-
-      assert(result == expected)
-    }
-
-    "should fail on sqrt(-4)" ignore {
-
-      val tree = OperatorNode(Sqrt, OperandNode(IntegerOperand(-4)), OperandNode(IntegerOperand(0)))
-      val result = Compute.compute(tree)
-      val expected = Left(ComputeError("cannot compute expression"))
 
       assert(result == expected)
     }

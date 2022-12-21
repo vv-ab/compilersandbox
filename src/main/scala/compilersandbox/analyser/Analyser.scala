@@ -2,15 +2,16 @@ package compilersandbox.analyser
 
 import compilersandbox.parser.DataType.Decimal
 import compilersandbox.parser.{Add, CloseParenthesis, Cos, DataType, DecimalOperand, Div, Fac, IntegerOperand, Mul, Node, OpenParenthesis, OperandNode, OperatorNode, Pow, Sin, Sqrt, Sub, Tan}
+import compilersandbox.util.Failure
 
 import scala.annotation.tailrec
 import scala.collection.mutable
 
 object Analyser {
 
-  case class AnalyserError(node: Node, message: String)
+  case class AnalyseFailure(node: Node, message: String) extends Failure
 
-  def analyse(tree: Node): Either[List[AnalyserError], Node] = {
+  def analyse(tree: Node): Either[List[AnalyseFailure], Node] = {
 
     val leafsToParents = Analyser.parents(tree)
 
@@ -26,9 +27,9 @@ object Analyser {
     result
   }
 
-  def checkDataType(node: OperandNode, parents: List[Node]): Either[AnalyserError, Unit] = {
+  def checkDataType(node: OperandNode, parents: List[Node]): Either[AnalyseFailure, Unit] = {
 
-    @tailrec def check(currentNode: Node, currentDataType: DataType, remaining: List[Node]): Either[AnalyserError, Unit] = {
+    @tailrec def check(currentNode: Node, currentDataType: DataType, remaining: List[Node]): Either[AnalyseFailure, Unit] = {
 
       val result = currentNode match {
         case OperatorNode(operator, left, right) =>
@@ -42,7 +43,7 @@ object Analyser {
             case Sin | Cos | Tan | Sqrt =>
               Right(DataType.Decimal)
             case Fac if currentDataType == DataType.Decimal =>
-              Left(AnalyserError(currentNode, "Expected integer number for Faculty but got decimal!"))
+              Left(AnalyseFailure(currentNode, "Expected integer number for Faculty but got decimal!"))
             case Fac =>
               Right(DataType.Integer)
             case OpenParenthesis => ???
