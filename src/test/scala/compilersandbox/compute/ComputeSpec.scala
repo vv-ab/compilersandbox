@@ -1,7 +1,7 @@
 package compilersandbox.compute
 
 import compilersandbox.compute.Compute.ComputeFailure
-import compilersandbox.parser.{Add, Cos, DecimalOperand, Div, Fac, IntegerOperand, Mul, OperandNode, OperatorNode, Pow, Sin, Sqrt, Sub, Tan}
+import compilersandbox.parser.{Add, Cos, DecimalOperand, Div, Fac, Flo, IntegerOperand, Mul, OperandNode, OperatorNode, Pow, Round, Sin, Sqrt, Sub, Tan}
 import org.junit.runner.RunWith
 import org.scalactic.{Equality, TolerantNumerics}
 import org.scalatest.freespec.AnyFreeSpec
@@ -272,6 +272,25 @@ class ComputeSpec extends AnyFreeSpec {
       val tree = OperatorNode(Sqrt, OperandNode(IntegerOperand(9)), OperandNode(IntegerOperand(0)))
       val result = Compute.compute(tree)
       val expected = Right(Right(Math.sqrt(9)))
+
+      assert(result == expected)
+    }
+
+    "should compute floor(5.4)" in {
+
+      val tree = OperatorNode(Flo, OperandNode(DecimalOperand(5.4)), OperandNode(IntegerOperand(0)))
+      val result = Compute.compute(tree)
+      val expected = Right(Left(5.4.floor.toInt))
+
+      assert(result == expected)
+    }
+
+
+    "should compute round(5.4)" in {
+
+      val tree = OperatorNode(Round, OperandNode(DecimalOperand(5.4)), OperandNode(IntegerOperand(0)))
+      val result = Compute.compute(tree)
+      val expected = Right(Left(5.4.round.toInt))
 
       assert(result == expected)
     }

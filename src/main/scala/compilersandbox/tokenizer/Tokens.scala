@@ -25,7 +25,7 @@ object Tokens {
     override def size(): Int = value.length
   }
 
-  case class Literal(value: String) extends Token {
+  case class IntegerLiteral(value: String) extends Token {
 
     override def size(): Int = value.length
   }
@@ -35,7 +35,7 @@ object Tokens {
     override def size(): Int = value.length
   }
   
-  case class IntegerLiteral(value: String) extends Token {
+  case class ConstantLiteral(value: String) extends Token {
 
     override def size(): Int = value.length  
   }

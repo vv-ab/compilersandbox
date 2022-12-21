@@ -1,6 +1,6 @@
 package compilersandbox.tokenizer
 
-import compilersandbox.tokenizer.Tokens.{DecimalLiteral, End, Ident, Literal, Parenthesis, Start, Token}
+import compilersandbox.tokenizer.Tokens.{DecimalLiteral, End, Ident, IntegerLiteral, Parenthesis, Start, Token}
 import compilersandbox.util.{Failure, Location}
 import compilersandbox.tokenizer.Tokens.ParenthesisKind.{Close, Open}
 
@@ -20,9 +20,9 @@ object Tokenizer {
             case Digit(digit) =>
               previous match {
                 case Start | Parenthesis(Open) | Parenthesis(Close) | _: Ident =>
-                  tokenize(input.tail, Literal(s"$digit"), tokens :+ previous)
-                case Literal(previousValue) =>
-                  tokenize(input.tail, Literal(s"$previousValue$digit"), tokens)
+                  tokenize(input.tail, IntegerLiteral(s"$digit"), tokens :+ previous)
+                case IntegerLiteral(previousValue) =>
+                  tokenize(input.tail, IntegerLiteral(s"$previousValue$digit"), tokens)
                 case DecimalLiteral(previousValue) =>
                   tokenize(input.tail, DecimalLiteral(s"$previousValue$digit"), tokens)
                 case End =>
@@ -30,7 +30,7 @@ object Tokenizer {
               }
             case Dot(dot) =>
               previous match {
-                case Literal(previousValue) =>
+                case IntegerLiteral(previousValue) =>
                   tokenize(input.tail, DecimalLiteral(s"$previousValue$dot"), tokens)
                 case Start | _: Ident | _: DecimalLiteral | Parenthesis(Open) | Parenthesis(Close) =>
                   Left(TokenizerFailure("unexpected token", initialInput, currentLocation()))
@@ -39,9 +39,9 @@ object Tokenizer {
               }
             case Letter(letter) =>
               previous match {
-                case Ident("pi") | Ident("sin") | Ident("tan") | Ident("cos") | Ident("e") | Ident("sqrt") =>
+                case Ident("pi") | Ident("sin") | Ident("tan") | Ident("cos") | Ident("e") | Ident("sqrt") | Ident("floor") | Ident("floor") =>
                   tokenize(input.tail, Ident(s"$letter"), tokens :+ previous)
-                case Start | Ident(Operator(_)) | _: Literal | _: DecimalLiteral | Parenthesis(Open) | Parenthesis(Close) =>
+                case Start | Ident(Operator(_)) | _: IntegerLiteral | _: DecimalLiteral | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$letter"), tokens :+ previous)
                 case Ident(previousValue) =>
                   tokenize(input.tail, Ident(s"$previousValue$letter"), tokens)
@@ -50,30 +50,30 @@ object Tokenizer {
               }
             case '+' | '-' =>
               previous match {
-                case Ident("pi") | Ident("e") | Ident("!") | _: Literal | _: DecimalLiteral | Parenthesis(Close) =>
+                case Ident("pi") | Ident("e") | Ident("!") | _: IntegerLiteral | _: DecimalLiteral | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case Start | _: Ident | Parenthesis(Open) =>
-                  tokenize(input.tail, Literal(s"$character"), tokens :+ previous)
+                  tokenize(input.tail, IntegerLiteral(s"$character"), tokens :+ previous)
                 case End =>
                   throw IllegalStateException("Should never happen ;-)")
               }
             case '*' | '/' | '^' | '!' =>
               previous match {
-                case Start | _: DecimalLiteral | _: Literal | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
+                case Start | _: DecimalLiteral | _: IntegerLiteral | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Ident(s"$character"), tokens :+ previous)
                 case End =>
                   throw IllegalStateException("Should never happen ;-)")
               }
             case '(' =>
               previous match {
-                case Start | _: Literal | _: DecimalLiteral | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
+                case Start | _: IntegerLiteral | _: DecimalLiteral | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Parenthesis(Open), tokens :+ previous)
                 case End =>
                   throw IllegalStateException("Should never happen ;-)")
               }
             case ')' =>
               previous match {
-                case Start | _: Literal | _: DecimalLiteral | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
+                case Start | _: IntegerLiteral | _: DecimalLiteral | _: Ident | Parenthesis(Open) | Parenthesis(Close) =>
                   tokenize(input.tail, Parenthesis(Close), tokens :+ previous)
                 case End =>
                   throw IllegalStateException("Should never happen ;-)")

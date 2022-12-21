@@ -1,6 +1,6 @@
 package compilersandbox.tokenizer
 
-import Tokens.{IntegerLiteral, End, DecimalLiteral, Ident, Literal, Parenthesis, ParenthesisKind, Start, Token}
+import Tokens.{ConstantLiteral, End, DecimalLiteral, Ident, IntegerLiteral, Parenthesis, ParenthesisKind, Start, Token}
 import Tokens.ParenthesisKind.{Close, Open}
 
 import scala.annotation.tailrec
@@ -15,7 +15,7 @@ object Preprocessor {
       input.headOption match {
         case Some(currentToken) =>
           currentToken match {
-            case Ident("cos") | Ident("sin") | Ident("tan") | Ident("sqrt") =>
+            case Ident("cos") | Ident("sin") | Ident("tan") | Ident("sqrt") | Ident("floor") | Ident("ceil") | Ident("round") =>
               result.lastOption match {
                 case Some(value) =>
                   value match {
@@ -23,7 +23,7 @@ object Preprocessor {
                       preprocess(input.tail, result :+ currentToken)
                     case End =>
                       throw IllegalStateException("Should never happen ;-)")
-                    case Parenthesis(Close) | _: Literal | _: DecimalLiteral | _: IntegerLiteral =>
+                    case Parenthesis(Close) | _: IntegerLiteral | _: DecimalLiteral | _: ConstantLiteral =>
                       val unseenOperator = Ident("*")
                       preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
                   }
@@ -36,10 +36,10 @@ object Preprocessor {
                     case End =>
                       throw IllegalStateException("Should never happen ;-)")
                     case Start | _: Ident | Parenthesis(Open) =>
-                      val pi = IntegerLiteral("pi")
+                      val pi = ConstantLiteral("pi")
                       preprocess(input.tail, result :+ pi)
-                    case _: Literal | Parenthesis(Close) | _: DecimalLiteral | _: IntegerLiteral =>
-                      val pi = IntegerLiteral("pi")
+                    case _: IntegerLiteral | Parenthesis(Close) | _: DecimalLiteral | _: ConstantLiteral =>
+                      val pi = ConstantLiteral("pi")
                       val unseenOperator = Ident("*")
                       preprocess(input.tail, (result :+ unseenOperator) :+ pi)
                   }
@@ -52,10 +52,10 @@ object Preprocessor {
                     case End =>
                       throw IllegalStateException("Should never happen ;-)")
                     case Start | _: Ident | Parenthesis(Open) =>
-                      val e = IntegerLiteral("e")
+                      val e = ConstantLiteral("e")
                       preprocess(input.tail, result :+ e)
-                    case _: Literal | Parenthesis(Close) | _: DecimalLiteral | _: IntegerLiteral =>
-                      val e = IntegerLiteral("e")
+                    case _: IntegerLiteral | Parenthesis(Close) | _: DecimalLiteral | _: ConstantLiteral =>
+                      val e = ConstantLiteral("e")
                       val unseenOperator = Ident("*")
                       preprocess(input.tail, (result :+ unseenOperator) :+ e)
                   }
@@ -63,16 +63,16 @@ object Preprocessor {
               }
             case _: Ident | Start | End =>
               preprocess(input.tail, result :+ currentToken)
-            case _: Literal | _: DecimalLiteral =>
+            case _: IntegerLiteral | _: DecimalLiteral =>
               result.lastOption match {
                 case Some(value) =>
                   value match {
                     case _: Ident | Start | Parenthesis(Open) =>
                       preprocess(input.tail, result :+ currentToken)
-                    case _: IntegerLiteral | Parenthesis(Close) =>
+                    case _: ConstantLiteral | Parenthesis(Close) =>
                       val unseenOperator = Ident("*")
                       preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
-                    case _: Literal | _: DecimalLiteral | End =>
+                    case _: IntegerLiteral | _: DecimalLiteral | End =>
                       throw IllegalStateException("Should never happen ;-)")
                   }
                 case None => ??? // error
@@ -81,7 +81,7 @@ object Preprocessor {
               result.lastOption match {
                 case Some(value) =>
                   value match {
-                    case _: Ident | _: Literal | _: DecimalLiteral | Start | Parenthesis(Close) | Parenthesis(Open) | _: IntegerLiteral =>
+                    case _: Ident | _: IntegerLiteral | _: DecimalLiteral | Start | Parenthesis(Close) | Parenthesis(Open) | _: ConstantLiteral =>
                       preprocess(input.tail, result :+ currentToken)
                     case End =>
                       throw IllegalStateException("Should never happen ;-)")
@@ -94,7 +94,7 @@ object Preprocessor {
                   previousToken match {
                     case _: Ident | Start =>
                       preprocess(input.tail, result :+ currentToken)
-                    case _: Literal | _: IntegerLiteral | _: DecimalLiteral | Parenthesis(Close) =>
+                    case _: IntegerLiteral | _: ConstantLiteral | _: DecimalLiteral | Parenthesis(Close) =>
                       val unseenOperator = Ident("*")
                       preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
                     case Parenthesis(Open) | End =>

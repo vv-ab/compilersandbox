@@ -184,4 +184,46 @@ class IntegrationSpec extends AnyFreeSpec with Inside {
       assert(failures.size == 1)
     }
   }
+
+  "should compute 4+floor(8.3)" in {
+
+    val input = "4+floor(8.3)"
+    val result = Tokenizer.tokenize(input)
+      .map(Preprocessor.preprocess)
+      .flatMap(Parser.parse)
+      .flatMap(Analyser.analyse)
+      .flatMap(Compute.compute)
+
+    inside(result) { case Right(Left(value)) =>
+      assert(value === 12)
+    }
+  }
+
+  "should compute 4+ceil(8.3)" in {
+
+    val input = "4+ceil(8.3)"
+    val result = Tokenizer.tokenize(input)
+      .map(Preprocessor.preprocess)
+      .flatMap(Parser.parse)
+      .flatMap(Analyser.analyse)
+      .flatMap(Compute.compute)
+
+    inside(result) { case Right(Left(value)) =>
+      assert(value === 13)
+    }
+  }
+
+  "should compute round(3.5)+1" in {
+
+    val input = "round(3.5)+1"
+    val result = Tokenizer.tokenize(input)
+      .map(Preprocessor.preprocess)
+      .flatMap(Parser.parse)
+      .flatMap(Analyser.analyse)
+      .flatMap(Compute.compute)
+
+    inside(result) { case Right(Left(value)) =>
+      assert(value === 5)
+    }
+  }
 }

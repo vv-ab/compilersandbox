@@ -92,6 +92,33 @@ object Compute {
           val left = toDouble(operandStack.pop())
           operandStack.pop()
           operandStack.push(DecimalOperand(Math.sqrt(left)))
+        case Flo =>
+          operandStack.pop() match {
+            case DecimalOperand(value) =>
+              operandStack.pop()
+              operandStack.push(IntegerOperand(value.floor.toInt))
+            case IntegerOperand(value) =>
+              operandStack.pop()
+              operandStack.push(IntegerOperand(value))
+          }
+        case Ceil =>
+          operandStack.pop() match {
+            case DecimalOperand(value) =>
+              operandStack.pop()
+              operandStack.push(IntegerOperand(value.ceil.toInt))
+            case IntegerOperand(value) =>
+              operandStack.pop()
+              operandStack.push(IntegerOperand(value))
+          }
+        case Round =>
+          operandStack.pop() match {
+            case DecimalOperand(value) =>
+              operandStack.pop()
+              operandStack.push(IntegerOperand(value.round.toInt))
+            case IntegerOperand(value) =>
+              operandStack.pop()
+              operandStack.push(IntegerOperand(value))
+          }
         case operand: Operand =>
           operandStack.push(operand)
       }
@@ -115,6 +142,7 @@ object Compute {
 
     }
   }
+
   def linearize(tree: Node): List[Operator | Operand] = {
 
     val result = mutable.ListBuffer[Operator | Operand]()

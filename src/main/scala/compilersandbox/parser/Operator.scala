@@ -51,3 +51,18 @@ case object Sqrt extends Operator {
 
   override def precedence(): Int = 3
 }
+
+case object Round extends Operator {
+
+  override def precedence(): Int = 10
+}
+
+case object Flo extends Operator {
+
+  override def precedence(): Int = 10
+}
+
+case object Ceil extends Operator {
+
+  override def precedence(): Int = 10
+}

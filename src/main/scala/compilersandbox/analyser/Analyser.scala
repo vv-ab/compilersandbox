@@ -1,7 +1,7 @@
 package compilersandbox.analyser
 
 import compilersandbox.parser.DataType.Decimal
-import compilersandbox.parser.{Add, CloseParenthesis, Cos, DataType, DecimalOperand, Div, Fac, IntegerOperand, Mul, Node, OpenParenthesis, OperandNode, OperatorNode, Pow, Sin, Sqrt, Sub, Tan}
+import compilersandbox.parser.{Add, Ceil, CloseParenthesis, Cos, DataType, DecimalOperand, Div, Fac, Flo, IntegerOperand, Mul, Node, OpenParenthesis, OperandNode, OperatorNode, Pow, Round, Sin, Sqrt, Sub, Tan}
 import compilersandbox.util.Failure
 
 import scala.annotation.tailrec
@@ -45,6 +45,12 @@ object Analyser {
             case Fac if currentDataType == DataType.Decimal =>
               Left(AnalyseFailure(currentNode, "Expected integer number for Faculty but got decimal!"))
             case Fac =>
+              Right(DataType.Integer)
+            case Flo =>
+              Right(DataType.Integer)
+            case Ceil =>
+              Right(DataType.Integer)
+            case Round =>
               Right(DataType.Integer)
             case OpenParenthesis => ???
             case CloseParenthesis => ???

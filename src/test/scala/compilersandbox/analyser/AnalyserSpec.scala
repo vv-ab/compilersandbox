@@ -70,5 +70,16 @@ class AnalyserSpec extends AnyFreeSpec with Inside {
         assert(result == expected)
       }
     }
+
+    "should analyse ceil(8.8)" in {
+
+      val input = OperatorNode(Ceil, OperandNode(DecimalOperand(8.8)), OperandNode(IntegerOperand(0)))
+      val expected = OperatorNode(Ceil, OperandNode(DecimalOperand(8.8)), OperandNode(IntegerOperand(0)))
+
+      val result = Analyser.analyse(input)
+      inside(result) { case Right(result) =>
+        assert(result == expected)
+      }
+    }
   }
 }

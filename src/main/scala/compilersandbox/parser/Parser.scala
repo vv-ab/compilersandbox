@@ -2,7 +2,7 @@ package compilersandbox.parser
 
 import compilersandbox.tokenizer
 import compilersandbox.tokenizer.Tokens
-import compilersandbox.tokenizer.Tokens.{DecimalLiteral, End, Ident, IntegerLiteral, Literal, Parenthesis, ParenthesisKind, Start, Token}
+import compilersandbox.tokenizer.Tokens.{DecimalLiteral, End, Ident, ConstantLiteral, IntegerLiteral, Parenthesis, ParenthesisKind, Start, Token}
 import compilersandbox.util.{Failure, Location}
 
 import scala.annotation.tailrec
@@ -21,7 +21,7 @@ object Parser {
 
       def makeUnaryOperatorNode(operatorStack: mutable.Stack[Operator], nodeStack: mutable.Stack[Node]): Either[ParsingFailure, Node] = {
         if (nodeStack.nonEmpty) {
-          val right = OperandNode(DecimalOperand(0))
+          val right = OperandNode(IntegerOperand(0))
           val left = nodeStack.pop()
           Right(OperatorNode(operatorStack.pop(), left, right))
         }
@@ -62,7 +62,7 @@ object Parser {
                   case Left(failure) =>
                     Left(failure)
                 }
-              case Sin | Cos | Tan | Sqrt=>
+              case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
                 val maybeNode = makeUnaryOperatorNode(operatorStack, nodeStack)
                 maybeNode match {
                   case Right(node) =>
@@ -74,7 +74,7 @@ object Parser {
               case Fac =>
                 Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
             }
-          case Add | Sub | Mul | Div | Pow | Sin | Cos | Tan | Sqrt =>
+          case Add | Sub | Mul | Div | Pow | Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
             operatorStack.headOption match {
               case Some(head) if head.precedence() >= operator.precedence() =>
                 val node: Either[ParsingFailure, Node] = head match {
@@ -82,7 +82,7 @@ object Parser {
                     Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
                   case Add | Sub | Mul | Div | Pow =>
                     makeBinaryOperatorNode(operatorStack, nodeStack)
-                  case Sin | Cos | Tan | Sqrt=>
+                  case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
                     makeUnaryOperatorNode(operatorStack, nodeStack)
                 }
                 node match {
@@ -107,7 +107,7 @@ object Parser {
               Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
             case Add | Sub | Mul | Div | Pow =>
               makeBinaryOperatorNode(operatorStack, nodeStack)
-            case Sin | Cos | Tan | Sqrt =>
+            case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
               makeUnaryOperatorNode(operatorStack, nodeStack)
           }
           node match {
@@ -151,7 +151,7 @@ object Parser {
                           Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
                         case Add | Sub | Mul | Div | Pow =>
                           makeBinaryOperatorNode(operatorStack, nodeStack)
-                        case Sin | Cos | Tan | Sqrt =>
+                        case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
                           makeUnaryOperatorNode(operatorStack, nodeStack)
                       }
                       node.map({ value =>
@@ -173,6 +173,12 @@ object Parser {
                   insertOperator(Tan, operatorStack, nodeStack)
                 case "sqrt" =>
                   insertOperator(Sqrt, operatorStack, nodeStack)
+                case "floor" =>
+                  insertOperator(Flo, operatorStack, nodeStack)
+                case "ceil" =>
+                  insertOperator(Ceil, operatorStack, nodeStack)
+                case "round" =>
+                  insertOperator(Round, operatorStack, nodeStack)
                 case _ =>
                   Left(ParsingFailure(s"unknown token: $value", initialInput, currentLocation()))
               }
@@ -182,7 +188,7 @@ object Parser {
                 case _ =>
                   parse(input.tail, operatorStack, nodeStack)
               }
-            case Literal(value) =>
+            case IntegerLiteral(value) =>
               value.toIntOption match {
                 case Some(value) =>
                   nodeStack.push(OperandNode(IntegerOperand(value)))
@@ -198,7 +204,7 @@ object Parser {
                 case None =>
                   Left(ParsingFailure(s"Literal is not a decimal number: $value", initialInput, currentLocation()))
               }
-            case IntegerLiteral(value) =>
+            case ConstantLiteral(value) =>
               value match {
                 case "pi" =>
                   nodeStack.push(OperandNode(DecimalOperand(Math.PI)))
