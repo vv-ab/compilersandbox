@@ -97,8 +97,10 @@ object Preprocessor {
                     case _: IntegerLiteral | _: ConstantLiteral | _: DecimalLiteral | Parenthesis(Close) =>
                       val unseenOperator = Ident("*")
                       preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
-                    case Parenthesis(Open) | End =>
-                      ??? // error
+                    case Parenthesis(Open) =>
+                      ???
+                    case End =>
+                      throw IllegalStateException("Should never happen ;-)")
                   }
                 case None => ???
               }

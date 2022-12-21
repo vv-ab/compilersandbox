@@ -48,38 +48,44 @@ object Parser {
             operatorStack.push(operator)
             Right(())
           case CloseParenthesis =>
-            operatorStack.head match {
-              case OpenParenthesis =>
-                operatorStack.pop()
-                Right(())
-              case CloseParenthesis =>
-                throw IllegalStateException("Encountered an unexpected closing parenthesis!")
-              case Add | Sub | Mul | Div | Pow =>
-                makeBinaryOperatorNode(operatorStack, nodeStack) match {
-                  case Right(node) =>
-                    nodeStack.push(node)
-                    insertOperator(operator, operatorStack, nodeStack)
-                  case Left(failure) =>
-                    Left(failure)
+            operatorStack.headOption match {
+              case Some(value) =>
+                value match {
+                  case OpenParenthesis =>
+                    operatorStack.pop()
+                    Right(())
+                  case CloseParenthesis =>
+                    throw IllegalStateException("Encountered an unexpected closing parenthesis!")
+                  case Add | Sub | Mul | Div | Pow =>
+                    makeBinaryOperatorNode(operatorStack, nodeStack) match {
+                      case Right(node) =>
+                        nodeStack.push(node)
+                        insertOperator(operator, operatorStack, nodeStack)
+                      case Left(failure) =>
+                        Left(failure)
+                    }
+                  case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
+                    val maybeNode = makeUnaryOperatorNode(operatorStack, nodeStack)
+                    maybeNode match {
+                      case Right(node) =>
+                        nodeStack.push(node)
+                        insertOperator(operator, operatorStack, nodeStack)
+                      case Left(failure) =>
+                        Left(failure)
+                    }
+                  case Fac | _ =>
+                    Left(ParsingFailure("failed to parse expression", initialInput, currentLocation()))
                 }
-              case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
-                val maybeNode = makeUnaryOperatorNode(operatorStack, nodeStack)
-                maybeNode match {
-                  case Right(node) =>
-                    nodeStack.push(node)
-                    insertOperator(operator, operatorStack, nodeStack)
-                  case Left(failure) =>
-                    Left(failure)
-                }
-              case Fac =>
-                Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
+              case None =>
+                Left(ParsingFailure("failed to parse expression", initialInput, currentLocation()))
+
             }
           case Add | Sub | Mul | Div | Pow | Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
             operatorStack.headOption match {
               case Some(head) if head.precedence() >= operator.precedence() =>
                 val node: Either[ParsingFailure, Node] = head match {
                   case OpenParenthesis | CloseParenthesis | Fac =>
-                    Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
+                    Left(ParsingFailure("failed to parse expression", initialInput, currentLocation()))
                   case Add | Sub | Mul | Div | Pow =>
                     makeBinaryOperatorNode(operatorStack, nodeStack)
                   case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
@@ -104,7 +110,7 @@ object Parser {
         if (operatorStack.nonEmpty) {
           val node = operatorStack.head match {
             case OpenParenthesis | CloseParenthesis | Fac =>
-              Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
+              Left(ParsingFailure("failed to parse expression", initialInput, currentLocation()))
             case Add | Sub | Mul | Div | Pow =>
               makeBinaryOperatorNode(operatorStack, nodeStack)
             case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
@@ -120,7 +126,7 @@ object Parser {
         }
         else {
           if (nodeStack.size != 1) {
-            Left(ParsingFailure("could not construct abstract syntax tree", initialInput, currentLocation()))
+            Left(ParsingFailure("could not construct abstract syntax tree, failed to parse expression", initialInput, currentLocation()))
           }
           else {
             Right(nodeStack.pop())
@@ -148,7 +154,7 @@ object Parser {
                     case Some(head) if head.precedence() >= Fac.precedence() =>
                       val node: Either[ParsingFailure, Node] = head match {
                         case OpenParenthesis | CloseParenthesis =>
-                          Left(ParsingFailure("Illegal token", initialInput, currentLocation()))
+                          Left(ParsingFailure("failed to parse expression", initialInput, currentLocation()))
                         case Add | Sub | Mul | Div | Pow =>
                           makeBinaryOperatorNode(operatorStack, nodeStack)
                         case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>

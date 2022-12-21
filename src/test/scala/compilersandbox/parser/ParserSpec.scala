@@ -295,6 +295,38 @@ class ParserSpec extends AnyFreeSpec {
       assert(result == expectation)
     }
 
+    "should fail on (())" ignore {
+
+      val input = List(Start, Parenthesis(Open), Parenthesis(Open), Parenthesis(Close), Parenthesis(Close), End)
+      val expectation = Left(List(ParsingFailure("could not construct abstract syntax tree, failed to parse expression", input, Location(1))))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
+
+    "should fail on ((" ignore {
+
+      val input = List(Start, Parenthesis(Open), Parenthesis(Open), End)
+      val expectation = Left(List(ParsingFailure("failed to parse expression", input, Location(1))))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
+
+
+    "should fail on )((" ignore {
+
+      val input = List(Start, Parenthesis(Close), Parenthesis(Open), Parenthesis(Open), End)
+      val expectation = Left(List(ParsingFailure("failed to parse expression", input, Location(1))))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
+
+
     "should fail on 44()" ignore {
 
       val input = List(Start, IntegerLiteral("44"), Ident("*"), Parenthesis(Open), Parenthesis(Close), End)
