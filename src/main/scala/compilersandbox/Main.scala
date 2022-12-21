@@ -13,13 +13,7 @@ def main(): Unit = {
   print("Enter expression: ")
   val input = Console.in.readLine()
 
-  val result = Tokenizer.tokenize(input)
-    .map(Preprocessor.preprocess)
-    .flatMap(Parser.parse)
-    .flatMap(Analyser.analyse)
-    .flatMap(Compute.compute)
-
-  result match {
+  input.evaluate match {
     case Left(failures) =>
       println(failures.head.message)
     case Right(value) =>
