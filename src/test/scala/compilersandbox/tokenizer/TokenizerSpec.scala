@@ -152,6 +152,14 @@ class TokenizerSpec extends AnyFreeSpec {
       assert(result == expected)
     }
 
+    "should tokenize 3,3" in {
+
+      val expected = Right(List(Start, DecimalLiteral("3,3"), End))
+      val result = Tokenizer.tokenize("3,3")
+
+      assert(result == expected)
+    }
+
     "should tokenize cos()" in {
 
       val expected = Right(List(Start, Ident("cos"), Parenthesis(Open), Parenthesis(Close), End))

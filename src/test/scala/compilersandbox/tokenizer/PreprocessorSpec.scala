@@ -134,7 +134,7 @@ class PreprocessorSpec extends AnyFreeSpec {
     "should process pifloor(9,8)" in {
 
       val input = List(Start, Ident("pi"), Ident("floor"), Parenthesis(Open), DecimalLiteral("9,8"), Parenthesis(Close), End)
-      val expected = List(Start, ConstantLiteral("pi"), Ident("*"), Ident("floor"), Parenthesis(Open), DecimalLiteral("9,8"), Parenthesis(Close), End)
+      val expected = List(Start, ConstantLiteral("pi"), Ident("*"), Ident("floor"), Parenthesis(Open), DecimalLiteral("9.8"), Parenthesis(Close), End)
       val result = Preprocessor.preprocess(input)
       assert(result == expected)
     }
@@ -142,7 +142,15 @@ class PreprocessorSpec extends AnyFreeSpec {
     "should process eceil(9,8)" in {
 
       val input = List(Start, Ident("e"), Ident("ceil"), Parenthesis(Open), DecimalLiteral("9,8"), Parenthesis(Close), End)
-      val expected = List(Start, ConstantLiteral("e"), Ident("*"), Ident("ceil"), Parenthesis(Open), DecimalLiteral("9,8"), Parenthesis(Close), End)
+      val expected = List(Start, ConstantLiteral("e"), Ident("*"), Ident("ceil"), Parenthesis(Open), DecimalLiteral("9.8"), Parenthesis(Close), End)
+      val result = Preprocessor.preprocess(input)
+      assert(result == expected)
+    }
+
+    "should process 2,3" in {
+
+      val input = List(Start, DecimalLiteral("2,3"), End)
+      val expected = List(Start, DecimalLiteral("2.3"), End)
       val result = Preprocessor.preprocess(input)
       assert(result == expected)
     }

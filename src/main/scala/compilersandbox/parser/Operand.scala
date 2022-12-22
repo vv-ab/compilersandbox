@@ -12,6 +12,6 @@ case class DecimalOperand(value: Double) extends Operand {
   override val dataType: DataType = DataType.Decimal
 }
 
-case class IntegerOperand(value: Int) extends Operand {
+case class IntegerOperand(value: Long) extends Operand {
   override val dataType: DataType = DataType.Integer
 }

@@ -157,7 +157,7 @@ object Parser {
                           Left(ParsingFailure("failed to parse expression", initialInput, currentLocation()))
                         case Add | Sub | Mul | Div | Pow =>
                           makeBinaryOperatorNode(operatorStack, nodeStack)
-                        case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round =>
+                        case Sin | Cos | Tan | Sqrt | Flo | Ceil | Round | Fac =>
                           makeUnaryOperatorNode(operatorStack, nodeStack)
                       }
                       node.map({ value =>
@@ -166,10 +166,15 @@ object Parser {
                         Right(OperatorNode(Fac, value, right))
                       })
                     case _ =>
-                      val right = OperandNode(IntegerOperand(0))
-                      val left = nodeStack.pop()
-                      nodeStack.push(OperatorNode(Fac, left, right))
-                      Right(OperatorNode(Fac, left, right))
+                      if (nodeStack.nonEmpty) {
+                        val right = OperandNode(IntegerOperand(0))
+                        val left = nodeStack.pop()
+                        nodeStack.push(OperatorNode(Fac, left, right))
+                        Right(OperatorNode(Fac, left, right))
+                      }
+                      else {
+                        Left(ParsingFailure("missing operand", initialInput, currentLocation()))
+                      }
                   }
                 case "sin" =>
                   insertOperator(Sin, operatorStack, nodeStack)
@@ -195,7 +200,7 @@ object Parser {
                   parse(input.tail, operatorStack, nodeStack)
               }
             case IntegerLiteral(value) =>
-              value.toIntOption match {
+              value.toLongOption match {
                 case Some(value) =>
                   nodeStack.push(OperandNode(IntegerOperand(value)))
                   parse(input.tail, operatorStack, nodeStack)

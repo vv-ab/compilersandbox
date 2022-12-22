@@ -6,7 +6,7 @@ import compilersandbox.util.Failure
 
 package object compilersandbox {
   extension (input: String) {
-    def evaluate: Either[List[Failure], Either[Int, Double]] = {
+    def evaluate: Either[List[Failure], Either[Long, Double]] = {
       Tokenizer.tokenize(input)
         .map(Preprocessor.preprocess)
         .flatMap(Parser.parse)

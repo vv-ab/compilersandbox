@@ -15,6 +15,9 @@ object Preprocessor {
       input.headOption match {
         case Some(currentToken) =>
           currentToken match {
+            case DecimalLiteral(value) if value.contains(",") =>
+              val replaceDot = DecimalLiteral(value.replace(",", "."))
+              preprocess(input.tail, result :+ replaceDot)
             case Ident("cos") | Ident("sin") | Ident("tan") | Ident("sqrt") | Ident("floor") | Ident("ceil") | Ident("round") =>
               result.lastOption match {
                 case Some(value) =>
@@ -92,13 +95,11 @@ object Preprocessor {
               result.lastOption match {
                 case Some(previousToken) =>
                   previousToken match {
-                    case _: Ident | Start =>
+                    case _: Ident | Start | Parenthesis(Open) =>
                       preprocess(input.tail, result :+ currentToken)
                     case _: IntegerLiteral | _: ConstantLiteral | _: DecimalLiteral | Parenthesis(Close) =>
                       val unseenOperator = Ident("*")
                       preprocess(input.tail, (result :+ unseenOperator) :+ currentToken)
-                    case Parenthesis(Open) =>
-                      ???
                     case End =>
                       throw IllegalStateException("Should never happen ;-)")
                   }

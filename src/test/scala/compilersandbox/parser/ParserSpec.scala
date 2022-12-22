@@ -446,5 +446,15 @@ class ParserSpec extends AnyFreeSpec {
 
       assert(result == expectation)
     }
+
+    "should parse 2.3" in {
+
+      val input = List(Start, DecimalLiteral("2.3"), End)
+      val expectation = Right(OperandNode(DecimalOperand(2.3)))
+
+      val result = Parser.parse(input)
+
+      assert(result == expectation)
+    }
   }
 }
